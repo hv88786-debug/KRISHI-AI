@@ -1,4 +1,4 @@
-# 🌾 AgroGuardian AI
+# 🌾 KRISHI-AI
 ### Smart IoT Farming System — Code War 2.0
 
 ![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
@@ -7,7 +7,7 @@
 ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
 ![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
 
-> **AgroGuardian AI** is a full-stack IoT-based smart farming system that monitors real-time soil and environmental conditions, predicts irrigation needs using AI, and automates water pump control — all accessible from a modern web dashboard.
+> **KRISHI-AI** is a full-stack IoT-based smart farming system that monitors real-time soil and environmental conditions, predicts irrigation needs using AI, and automates water pump control — all accessible from a modern web dashboard.
 
 ---
 
@@ -53,8 +53,8 @@
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/hv88786-debug/AgroGuardian-AI.git
-cd AgroGuardian-AI
+git clone https://github.com/hv88786-debug/KRISHI-AI.git
+cd KRISHI-AI
 ```
 
 ### 2. Backend Setup
@@ -70,7 +70,7 @@ npm start
 - Runs on `http://localhost:5500`
 
 ### 4. ESP32 Firmware
-- Open `firmware/AgroGuardian.ino` in Arduino IDE
+- Open `firmware/KRISHI.ino` in Arduino IDE
 - Set your **WiFi SSID, Password & Backend IP** in the config section
 - Flash to ESP32
 
@@ -79,7 +79,7 @@ npm start
 ## 📁 Project Structure
 
 ```
-AgroGuardian-AI/
+KRISHI-AI/
 ├── backend/
 │   ├── server.js          # Express server + MongoDB
 │   ├── package.json
@@ -92,7 +92,7 @@ AgroGuardian-AI/
 │   ├── alerts.html        # Smart Alerts
 │   └── settings.html      # Configuration
 └── firmware/
-    └── AgroGuardian.ino   # ESP32 Firmware
+    └── KRISHI.ino   # ESP32 Firmware
 ```
 
 ---
@@ -106,7 +106,7 @@ AgroGuardian-AI/
 | **Jiya Sapnani** | UI/UX & Research |
 | **Gungun Gupta** | Data & Presentation |
 
-> 🏆 Built for **Code War 2.0** | Government Engineering College, Ajmer
+> 🏆 Built for **PUNE AGRI HACKTHON** | Government Engineering College, Ajmer
 
 ---
 
