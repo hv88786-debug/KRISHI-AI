@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Market Prices — कृषि AI🌾</title>
+<link rel="stylesheet" href="style.css">
+<style>
+body{padding-top:64px;background:#f8faf6}
+.content{max-width:1280px;margin:0 auto;padding:32px 5%}
+
+/* FILTER BAR */
+.filter-bar{display:flex;align-items:center;gap:8px;margin-bottom:24px;flex-wrap:wrap}
+.filter-btn{padding:9px 18px;border-radius:24px;border:1.5px solid #e2e8f0;background:#fff;font-size:13px;font-weight:600;color:#475569;cursor:pointer;transition:all 0.18s;font-family:'Outfit',sans-serif;display:flex;align-items:center;gap:6px}
+.filter-btn:hover{border-color:#86efac;color:#15803d;background:#f0fdf4}
+.filter-btn.active{background:#16a34a;color:#fff;border-color:#16a34a;box-shadow:0 4px 14px rgba(22,163,74,0.3)}
+.filter-count{background:rgba(255,255,255,0.25);border-radius:10px;padding:1px 6px;font-size:10px;font-weight:700}
+.filter-btn:not(.active) .filter-count{background:#f1f5f9;color:#64748b}
+.search-wrap{margin-left:auto;display:flex;align-items:center;gap:10px}
+.search-box{display:flex;align-items:center;gap:8px;background:#fff;border:1.5px solid #e2e8f0;border-radius:12px;padding:8px 14px;transition:border-color 0.2s}
+.search-box:focus-within{border-color:#4ade80;box-shadow:0 0 0 3px rgba(74,222,128,0.1)}
+.search-box input{border:none;outline:none;font-size:13px;color:#0f172a;font-family:'Outfit',sans-serif;width:200px;background:transparent}
+.sort-select{padding:9px 12px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:13px;font-family:'Outfit',sans-serif;color:#475569;background:#fff;outline:none;cursor:pointer}
+
+/* CATEGORY PILLS (HORIZONTAL SCROLL) */
+.cat-pills{display:flex;gap:8px;margin-bottom:20px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
+.cat-pills::-webkit-scrollbar{display:none}
+.cat-pill{flex-shrink:0;display:flex;align-items:center;gap:6px;padding:6px 16px;border-radius:20px;border:1.5px solid #e2e8f0;background:#fff;font-size:12px;font-weight:600;color:#64748b;cursor:pointer;transition:all 0.2s;font-family:'Outfit',sans-serif}
+.cat-pill:hover{border-color:#86efac;color:#15803d;background:#f0fdf4}
+.cat-pill.active{background:linear-gradient(135deg,#16a34a,#22c55e);color:#fff;border-color:transparent;box-shadow:0 4px 12px rgba(22,163,74,0.25)}
+.cp-dot{width:8px;height:8px;border-radius:50%}
+
+/* HERO PRICE CARDS */
+.price-hero{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
+.ph-card{background:#fff;border:1px solid #e2e8f0;border-radius:18px;padding:18px;cursor:pointer;transition:all 0.2s;position:relative;overflow:hidden}
+.ph-card:hover{transform:translateY(-4px);box-shadow:0 16px 40px rgba(0,0,0,0.1);border-color:#bbf7d0}
+.ph-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px}
+.ph-up::after{background:linear-gradient(90deg,#22c55e,#4ade80)}
+.ph-dn::after{background:linear-gradient(90deg,#ef4444,#f87171)}
+.ph-crop-tag{display:inline-flex;align-items:center;gap:5px;background:#f1f5f9;border-radius:6px;padding:3px 8px;font-size:10px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px}
+.ph-crop{font-size:13px;font-weight:700;color:#475569;margin-bottom:4px}
+.ph-price{font-size:28px;font-weight:900;color:#0f172a;letter-spacing:-1px}
+.ph-unit{font-size:11px;color:#94a3b8;font-weight:400}
+.ph-delta{display:flex;align-items:center;gap:4px;margin-top:5px;font-size:13px;font-weight:700}
+.ph-mandi{font-size:11px;color:#94a3b8;margin-top:4px}
+.ph-trend{display:flex;align-items:flex-end;gap:2px;height:32px;margin-top:10px}
+.pt-bar{flex:1;border-radius:2px 2px 0 0}
+
+/* MAIN LAYOUT */
+.market-layout{display:grid;grid-template-columns:1fr 350px;gap:20px;align-items:start}
+
+/* TABLE */
+.table-wrap{background:#fff;border:1px solid #e2e8f0;border-radius:18px;overflow:hidden}
+.table-head{padding:16px 20px;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;justify-content:space-between}
+.table-title{font-size:15px;font-weight:700;color:#0f172a}
+.table-sub{font-size:12px;color:#94a3b8;margin-top:2px}
+.price-table{width:100%;border-collapse:collapse}
+.price-table th{padding:10px 16px;text-align:left;font-size:10px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.6px;background:#fafcf9;border-bottom:1px solid #f1f5f9}
+.price-table td{padding:12px 16px;font-size:13px;color:#0f172a;border-bottom:1px solid #f8fafc;transition:background 0.15s}
+.price-table tr:last-child td{border-bottom:none}
+.price-table tbody tr:hover td{background:#f8faf6}
+.price-table tr.hidden-row{display:none}
+.crop-cell{display:flex;align-items:center;gap:10px}
+.crop-emoji-sm{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;background:#f8faf6;flex-shrink:0;border:1px solid #f1f5f9}
+.crop-name-cell{font-weight:700;color:#0f172a}
+.crop-variety{font-size:11px;color:#94a3b8;margin-top:1px}
+.price-cell{font-weight:800;font-size:15px;color:#15803d}
+.delta-cell{font-weight:700;font-size:13px}
+.trend-mini{display:flex;align-items:flex-end;gap:2px;height:22px}
+.tm-bar{width:5px;border-radius:1px 1px 0 0}
+.cat-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700}
+.cat-cereal{background:#fef3c7;color:#92400e}
+.cat-veg{background:#dcfce7;color:#166534}
+.cat-pulse{background:#eff6ff;color:#1e40af}
+.cat-spice{background:#fdf2f8;color:#9d174d}
+.cat-oilseed{background:#fff7ed;color:#c2410c}
+.cat-fruit{background:#fdf4ff;color:#7e22ce}
+.no-results{display:none;padding:48px;text-align:center;color:#94a3b8;font-size:14px}
+
+/* RIGHT COLUMN */
+.right-col{display:flex;flex-direction:column;gap:14px}
+.fc-card{background:#fff;border:1px solid #e2e8f0;border-radius:18px;padding:20px}
+.fc-head{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px}
+.fc-title{font-size:14px;font-weight:700;color:#0f172a}
+.fc-sub{font-size:11px;color:#94a3b8;margin-top:2px}
+.fc-badge{padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0}
+.chart-area{height:130px;display:flex;align-items:flex-end;gap:4px;padding:0 2px;position:relative}
+.chart-bar{flex:1;border-radius:4px 4px 0 0;cursor:pointer;transition:opacity 0.15s;position:relative}
+.chart-bar:hover{opacity:0.8}
+.chart-val{position:absolute;top:-16px;left:50%;transform:translateX(-50%);font-size:9px;font-weight:700;color:#475569;white-space:nowrap}
+.chart-labels{display:flex;gap:4px;padding:5px 2px 0}
+.cl-item{flex:1;text-align:center;font-size:9px;color:#94a3b8}
+.forecast-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid #f1f5f9}
+.fs-item{text-align:center}
+.fs-label{font-size:10px;color:#94a3b8}
+.fs-val{font-size:13px;font-weight:800;color:#0f172a;margin-top:2px}
+
+/* CROP SELECTOR */
+.crop-selector{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.cs-btn{padding:5px 12px;border-radius:20px;border:1.5px solid #e2e8f0;background:#fff;font-size:11px;font-weight:600;color:#64748b;cursor:pointer;transition:all 0.15s;font-family:'Outfit',sans-serif}
+.cs-btn.active{background:#15803d;color:#fff;border-color:#15803d}
+
+/* BEST MANDI */
+.bm-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #f8fafc}
+.bm-row:last-child{border:none}
+.bm-rank{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0}
+.r1{background:#fef3c7;color:#92400e}
+.r2{background:#f1f5f9;color:#475569}
+.r3{background:#fef2f2;color:#991b1b}
+.r4{background:#eff6ff;color:#1d4ed8}
+.bm-name{font-size:13px;font-weight:700;color:#0f172a}
+.bm-dist{font-size:11px;color:#94a3b8;margin-top:1px}
+.bm-price{font-size:14px;font-weight:800;color:#15803d;margin-left:auto}
+.bm-trend{font-size:10px;font-weight:600}
+
+/* AI BANNER */
+.ai-banner{background:linear-gradient(135deg,#0d2818,#155c2d);border-radius:16px;padding:18px;border:1px solid rgba(74,222,128,0.2)}
+.aib-tag{font-size:10px;font-weight:700;color:#4ade80;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.aib-main{font-size:14px;font-weight:800;color:#fff;margin-bottom:5px;line-height:1.4}
+.aib-sub{font-size:12px;color:rgba(255,255,255,0.6);line-height:1.6;margin-bottom:12px}
+.aib-btn{display:block;text-align:center;background:rgba(74,222,128,0.15);border:1px solid rgba(74,222,128,0.3);color:#4ade80;padding:9px;border-radius:10px;font-size:13px;font-weight:700;text-decoration:none;transition:background 0.2s}
+.aib-btn:hover{background:rgba(74,222,128,0.25)}
+
+/* CAT SUMMARY */
+.cs-row{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid #f8fafc}
+.cs-row:last-child{border:none}
+.cs-left{display:flex;align-items:center;gap:10px}
+.cs-cat{font-size:13px;font-weight:700;color:#0f172a}
+.cs-count{font-size:11px;color:#94a3b8}
+.cs-bar-wrap{width:70px;height:5px;background:#f1f5f9;border-radius:3px;overflow:hidden}
+.cs-bar-fill{height:100%;border-radius:3px}
+.cs-status{font-size:11px;font-weight:700}
+
+/* LIVE */
+.live-chip{display:inline-flex;align-items:center;gap:5px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:20px;padding:4px 10px;font-size:10px;font-weight:700;color:#15803d}
+.live-dot-sm{width:6px;height:6px;border-radius:50%;background:#22c55e;animation:pulse2 1s infinite}
+@keyframes pulse2{0%,100%{opacity:1}50%{opacity:0.3}}
+
+/* CATEGORY SWITCH ANIMATION */
+tbody tr{transition:opacity 0.2s,transform 0.2s}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 2C7 2 4 5.5 4 9.5c0 3 1.5 5.5 3.8 6.8L10 18l2.2-1.7C14.5 15 16 12.5 16 9.5 16 5.5 13 2 10 2z" fill="rgba(255,255,255,0.95)"/><path d="M10 7v5M8 9l2-2 2 2" stroke="rgba(21,128,61,0.9)" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+      <div class="nav-logo-text">कृषि<span>AI</span>🌾</div>
+    </a>
+    <div class="nav-links">
+      <a href="index.html">Home</a><a href="dashboard.html">Dashboard</a><a href="disease.html">Disease AI</a>
+      <a href="market.html" class="active">Market</a><a href="schemes.html">Schemes</a><a href="about.html">About</a>
+    </div>
+    <a href="dashboard.html" class="btn btn-green" style="font-size:13px;padding:8px 18px;">Open Dashboard →</a>
+  </div>
+</nav>
+
+<div class="page-hero">
+  <div class="page-hero-inner">
+    <div class="section-tag" style="background:rgba(74,222,128,0.15);border-color:rgba(74,222,128,0.3);color:#86efac;margin-bottom:14px">Live · Updated Every Hour</div>
+    <h1>📈 Market Prices & AI Forecast</h1>
+    <p>Live mandi prices from 50+ markets across Rajasthan. Filter by crop category, search any crop, and get AI-powered price predictions.</p>
+  </div>
+</div>
+
+<div class="content">
+
+  <!-- CATEGORY PILLS (PROMINENT) -->
+  <div class="cat-pills" id="catPills">
+    <div class="cat-pill active" onclick="filterCat(this,'all')"><span>🌿</span>All Crops<span style="background:rgba(255,255,255,0.25);border-radius:10px;padding:1px 6px;font-size:10px;font-weight:700" id="cnt-all">18</span></div>
+    <div class="cat-pill" onclick="filterCat(this,'cereal')"><div class="cp-dot" style="background:#f59e0b"></div>🌾 Cereals<span style="background:#f1f5f9;border-radius:10px;padding:1px 6px;font-size:10px;font-weight:700;color:#64748b">3</span></div>
+    <div class="cat-pill" onclick="filterCat(this,'veg')"><div class="cp-dot" style="background:#22c55e"></div>🥦 Vegetables<span style="background:#f1f5f9;border-radius:10px;padding:1px 6px;font-size:10px;font-weight:700;color:#64748b">6</span></div>
+    <div class="cat-pill" onclick="filterCat(this,'pulse')"><div class="cp-dot" style="background:#3b82f6"></div>🫘 Pulses<span style="background:#f1f5f9;border-radius:10px;padding:1px 6px;font-size:10px;font-weight:700;color:#64748b">3</span></div>
+    <div class="cat-pill" onclick="filterCat(this,'oilseed')"><div class="cp-dot" style="background:#f97316"></div>🥜 Oilseeds<span style="background:#f1f5f9;border-radius:10px;padding:1px 6px;font-size:10px;font-weight:700;color:#64748b">3</span></div>
+    <div class="cat-pill" onclick="filterCat(this,'spice')"><div class="cp-dot" style="background:#ec4899"></div>🌶️ Spices<span style="background:#f1f5f9;border-radius:10px;padding:1px 6px;font-size:10px;font-weight:700;color:#64748b">2</span></div>
+    <div class="cat-pill" onclick="filterCat(this,'fruit')"><div class="cp-dot" style="background:#a855f7"></div>🍇 Fruits<span style="background:#f1f5f9;border-radius:10px;padding:1px 6px;font-size:10px;font-weight:700;color:#64748b">1</span></div>
+  </div>
+
+  <!-- SEARCH + SORT -->
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;flex-wrap:wrap">
+    <div class="search-box">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><circle cx="6.5" cy="6.5" r="4.5" stroke="#94a3b8" stroke-width="1.5"/><path d="M10 10l3 3" stroke="#94a3b8" stroke-width="1.5" stroke-linecap="round"/></svg>
+      <input type="text" id="searchInput" placeholder="Search crop or mandi..." oninput="searchCrops(this.value)">
+    </div>
+    <select class="sort-select" onchange="sortTable(this.value)">
+      <option value="modal">Sort: Modal Price</option>
+      <option value="high">Highest Price</option>
+      <option value="low">Lowest Price</option>
+      <option value="gain">Biggest Gain</option>
+    </select>
+    <div style="margin-left:auto;display:flex;align-items:center;gap:8px">
+      <div class="live-chip"><div class="live-dot-sm"></div>Live Prices</div>
+      <span style="font-size:12px;color:#94a3b8">Showing <strong id="crop-count" style="color:#0f172a">18</strong> crops</span>
+    </div>
+  </div>
+
+  <!-- TOP HERO CARDS -->
+  <div class="price-hero">
+    <div class="ph-card ph-up">
+      <div class="ph-crop-tag"><span>🌾</span>Cereal</div>
+      <div class="ph-crop">Wheat</div>
+      <div><span class="ph-price">₹2,450</span><span class="ph-unit"> /qtl</span></div>
+      <div class="ph-delta" style="color:#16a34a">↑ +₹120 <span style="color:#94a3b8;font-weight:400;font-size:11px">today</span></div>
+      <div class="ph-mandi">🏪 Best: Jaipur Mandi</div>
+      <div class="ph-trend" id="trend-wheat"></div>
+    </div>
+    <div class="ph-card ph-up">
+      <div class="ph-crop-tag"><span>🥦</span>Vegetable</div>
+      <div class="ph-crop">Garlic</div>
+      <div><span class="ph-price">₹8,200</span><span class="ph-unit"> /qtl</span></div>
+      <div class="ph-delta" style="color:#16a34a">↑ +₹340 <span style="color:#94a3b8;font-weight:400;font-size:11px">today</span></div>
+      <div class="ph-mandi">🏪 Best: Kota Mandi</div>
+      <div class="ph-trend" id="trend-garlic"></div>
+    </div>
+    <div class="ph-card ph-up">
+      <div class="ph-crop-tag"><span>🫘</span>Pulse</div>
+      <div class="ph-crop">Moong Dal</div>
+      <div><span class="ph-price">₹7,200</span><span class="ph-unit"> /qtl</span></div>
+      <div class="ph-delta" style="color:#16a34a">↑ +₹160 <span style="color:#94a3b8;font-weight:400;font-size:11px">today</span></div>
+      <div class="ph-mandi">🏪 Best: Nagaur Mandi</div>
+      <div class="ph-trend" id="trend-moong"></div>
+    </div>
+    <div class="ph-card ph-dn">
+      <div class="ph-crop-tag"><span>🌶️</span>Spice</div>
+      <div class="ph-crop">Red Chilli</div>
+      <div><span class="ph-price">₹9,800</span><span class="ph-unit"> /qtl</span></div>
+      <div class="ph-delta" style="color:#ef4444">↓ −₹120 <span style="color:#94a3b8;font-weight:400;font-size:11px">today</span></div>
+      <div class="ph-mandi">🏪 Best: Jodhpur Mandi</div>
+      <div class="ph-trend" id="trend-chilli"></div>
+    </div>
+  </div>
+
+  <div class="market-layout">
+    <!-- TABLE -->
+    <div>
+      <div class="table-wrap">
+        <div class="table-head">
+          <div>
+            <div class="table-title">Rajasthan Mandi Live Prices</div>
+            <div class="table-sub">Updated: Today · Source: APMC · <span id="crop-count2">18</span> crops</div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <div class="live-chip"><div class="live-dot-sm"></div>Live</div>
+          </div>
+        </div>
+        <table class="price-table" id="priceTable">
+          <thead>
+            <tr>
+              <th>Crop</th><th>Category</th><th>Mandi</th>
+              <th>Min</th><th>Max</th><th>Modal Price</th>
+              <th>Change</th><th>7-day Trend</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody">
+            <!-- CEREALS -->
+            <tr data-cat="cereal" data-name="wheat" data-modal="2450" data-delta="120">
+              <td><div class="crop-cell"><div class="crop-emoji-sm">🌾</div><div><div class="crop-name-cell">Wheat</div><div class="crop-variety">Lok-1</div></div></div></td>
+              <td><span class="cat-badge cat-cereal">🌾 Cereal</span></td>
+              <td>Jaipur</td><td>₹2,300</td><td>₹2,600</td>
+              <td class="price-cell">₹2,450</td>
+              <td class="delta-cell" style="color:#16a34a">↑ +₹120</td>
+              <td><div class="trend-mini" id="tm-wheat"></div></td>
+            </tr>
+            <tr data-cat="cereal" data-name="maize" data-modal="1920" data-delta="-25">
+              <td><div class="crop-cell"><div class="crop-emoji-sm">🌽</div><div><div class="crop-name-cell">Maize</div><div class="crop-variety">Hybrid</div></div></div></td>
+              <td><span class="cat-badge cat-cereal">🌾 Cereal</span></td>
+              <td>Ajmer</td><td>₹1,850</td><td>₹1,980</td>
+              <td class="price-cell">₹1,920</td>
+              <td class="delta-cell" style="color:#ef4444">↓ −₹25</td>
+              <td><div class="trend-mini" id="tm-maize"></div></td>
+            </tr>
+            <tr data-cat="cereal" data-name="barley" data-modal="1680" data-delta="45">
+              <td><div class="crop-cell"><div class="crop-emoji-sm">🌱</div><div><div class="crop-name-cell">Barley</div><div class="crop-variety">RD-2552</div></div></div></td>
+              <td><span class="cat-badge cat-cereal">🌾 Cereal</span></td>
+              <td>Kota</td><td>₹1,620</td><td>₹1,740</td>
+              <td class="price-cell">₹1,680</td>
+              <td class="delta-cell" style="color:#16a34a">↑ +₹45</td>
+              <td><div class="trend-mini" id="tm-barley"></div></td>
+            </tr>
+            <!-- VEGETABLES -->
+            <tr data-cat="veg" data-name="onion" data-modal="1450" data-delta="80">
+              <td><div class="crop-cell"><div class="crop-emoji-sm">🧅</div><div><div class="crop-name-cell">Onion</div><div class="crop-variety">Nasik Red</div></div></div></td>
+              <td><span class="cat-badge cat-veg">🥦 Vegetable</span></td>
+              <td>Kishangarh</td><td>₹1,300</td><td>₹1,600</td>
+              <td class="price-cell">₹1,450</td>
+              <td class="delta-cell" style="color:#16a34a">↑ +₹80</td>
+              <td><div class="trend-mini" id="tm-onion"></div></td>
+            </tr>
+            <tr data-cat="veg" data-name="tomato" data-modal="980" data-delta="-15">
+              <td><div class="crop-cell"><div class="crop-emoji-sm">🍅</div><div><div class="crop-name-cell">Tomato</div><div class="crop-variety">Desi Round</div></div></div></td>
+              <td><span class="cat-badge cat-veg">🥦 Vegetable</span></td>
+              <td>Beawar</td><td>₹900</td><td>₹1,050</td>
+              <td class="price-cell">₹980</td>
+              <td class="delta-cell" style="color:#ef4444">↓ −₹15</td>
+              <td><div class="trend-mini" id="tm-tomato"></div></td>
+            </tr>
+            <tr data-cat="veg" data-name="potato" data-modal="1120" data-delta="30">
+              <td><div class="crop-cell"><div class="crop-emoji-sm">🥔</div><div><div class="crop-name-cell">Potato</div><div class="crop-variety">Kufri Badshah</div></div></div></td>
+              <td><span class="cat-badge cat-veg">🥦 Vegetable</span></td>
+              <td>Alwar</td><td>₹1,050</td><td>₹1,200</td>
+              <td class="price-cell">₹1,120</td>
+              <td class="delta-cell" style="color:#16a34a">↑ +₹30</td>
+              <td><div class="trend-mini" id="tm-potato"></div></td>
+            </tr>
+            <tr data-cat="veg" data-name="garlic" data-modal="8200" data-delta="340">
+              <td><div class="crop-cell"><div class="crop-emoji-sm">🧄</div><div><div class="crop-name-cell">Garlic</div><div class="crop-variety">Desi White</div></div></div></td>
+              <td><span class="cat-badge cat-veg">🥦 Vegetable</span></td>
+              <td>Kota</td><td>₹7,800</td><td>₹8,600</td>
+              <td class="price-cell">₹8,200</td>
+              <td class="delta-cell" style="color:#16a34a">↑ +₹340</td>
+              <td><div class="trend-mini" id="tm-garlic"></div></td>
+            </tr>
+            <tr data-cat="veg" data-name="cauliflower" data-modal="1350" data-delta="55">
+              <td><div class="crop-cell"><div class="crop-emoji-sm">🥦</div><div><div class="crop-name-cell">Cauliflower</div><div class="crop-variety">Snowball</div></div></div></td>
+              <td><span class="cat-badge cat-veg">🥦 Vegetable</span></td>
+              <td>Jaipur</td><td>₹1,200</td><td>₹1,500</td>
+              <td class="price-cell">₹1,350</td>
+              <td class="delta-cell" style="color:#16a34a">↑ +₹55</td>
+              <td><div class="trend-mini" id="tm-cauli"></div></td>
+            </tr>
+            <tr data-cat="veg" data-name="brinjal" data-modal="860" data-delta="-20">
+              <td><div class="crop-cell"><div class="crop-emoji-sm">🍆</div><div><div class="crop-name-cell">Brinjal</div><div class="crop-variety">Round</div></div></div></td>
+              <td><span class="cat-badge cat-veg">🥦 Vegetable</span></td>
+              <td>Ajmer</td><td>₹760</td><td>₹960</td>
+              <td class="price-cell">₹860</td>
+              <td class="delta-cell" style="color:#ef4444">↓ −₹20</td>
+              <td><div class="trend-mini" id="tm-brinjal"></div></td>
+            </tr>
+            <!-- PULSES -->
+            <tr data-cat="pulse" data-name="moong" data-modal="7200" data-delta="160">
+              <td><div class="crop-cell"><div class="crop-emoji-sm">🫘</div><div><div class="crop-name-cell">Moong Dal</div><div class="crop-variety">SML-668</div></div></div></td>
+              <td><span class="cat-badge cat-pulse">🫘 Pulse</span></td>
+              <td>Nagaur</td><td>₹6,900</td><td>₹7,500</td>
+              <td class="price-cell">₹7,200</td>
+              <td class="delta-cell" style="color:#16a34a">↑ +₹160</td>
+              <td><div class="trend-mini" id="tm-moong"></div></td>
+            </tr>
+            <tr data-cat="pulse" data-name="chana" data-modal="5400" data-delta="-80">
+              <td><div class="crop-cell"><div class="crop-emoji-sm">🟡</div><div><div class="crop-name-cell">Chana</div><div class="crop-variety">Desi</div></div></div></td>
+              <td><span class="cat-badge cat-pulse">🫘 Pulse</span></td>
+              <td>Ajmer</td><td>₹5,100</td><td>₹5,700</td>
+              <td class="price-cell">₹5,400</td>
+              <td class="delta-cell" style="color:#ef4444">↓ −₹80</td>
+              <td><div class="trend-mini" id="tm-chana"></div></td>
+            </tr>
+            <tr data-cat="pulse" data-name="masoor" data-modal="6100" data-delta="90">
+              <td><div class="crop-cell"><div class="crop-emoji-sm">🔴</div><div><div class="crop-name-cell">Masoor Dal</div><div class="crop-variety">HUL-57</div></div></div></td>
+              <td><span class="cat-badge cat-pulse">🫘 Pulse</span></td>
+              <td>Bikaner</td><td>₹5,800</td><td>₹6,400</td>
+              <td class="price-cell">₹6,100</td>
+              <td class="delta-cell" style="color:#16a34a">↑ +₹90</td>
+              <td><div class="trend-mini" id="tm-masoor"></div></td>
+            </tr>
+            <!-- OILSEEDS -->
+            <tr data-cat="oilseed" data-name="mustard" data-modal="5600" data-delta="200">
+              <td><div class="crop-cell"><div class="crop-emoji-sm">🌻</div><div><div class="crop-name-cell">Mustard</div><div class="crop-variety">Kranti</div></div></div></td>
+              <td><span class="cat-badge cat-oilseed">🥜 Oilseed</span></td>
+              <td>Bharatpur</td><td>₹5,200</td><td>₹6,000</td>
+              <td class="price-cell">₹5,600</td>
+              <td class="delta-cell" style="color:#16a34a">↑ +₹200</td>
+              <td><div class="trend-mini" id="tm-mustard"></div></td>
+            </tr>
+            <tr data-cat="oilseed" data-name="soybean" data-modal="4020" data-delta="120">
+              <td><div class="crop-cell"><div class="crop-emoji-sm">🟢</div><div><div class="crop-name-cell">Soybean</div><div class="crop-variety">JS-335</div></div></div></td>
+              <td><span class="cat-badge cat-oilseed">🥜 Oilseed</span></td>
+              <td>Ajmer</td><td>₹3,800</td><td>₹4,200</td>
+              <td class="price-cell">₹4,020</td>
+              <td class="delta-cell" style="color:#16a34a">↑ +₹120</td>
+              <td><div class="trend-mini" id="tm-soybean"></div></td>
+            </tr>
+            <tr data-cat="oilseed" data-name="groundnut" data-modal="5100" data-delta="-60">
+              <td><div class="crop-cell"><div class="crop-emoji-sm">🥜</div><div><div class="crop-name-cell">Groundnut</div><div class="crop-variety">Bold</div></div></div></td>
+              <td><span class="cat-badge cat-oilseed">🥜 Oilseed</span></td>
+              <td>Nagaur</td><td>₹4,800</td><td>₹5,400</td>
+              <td class="price-cell">₹5,100</td>
+              <td class="delta-cell" style="color:#ef4444">↓ −₹60</td>
+              <td><div class="trend-mini" id="tm-groundnut"></div></td>
+            </tr>
+            <!-- SPICES -->
+            <tr data-cat="spice" data-name="coriander" data-modal="6600" data-delta="200">
+              <td><div class="crop-cell"><div class="crop-emoji-sm">🌿</div><div><div class="crop-name-cell">Coriander</div><div class="crop-variety">Eagle</div></div></div></td>
+              <td><span class="cat-badge cat-spice">🌶️ Spice</span></td>
+              <td>Kota</td><td>₹6,200</td><td>₹7,000</td>
+              <td class="price-cell">₹6,600</td>
+              <td class="delta-cell" style="color:#16a34a">↑ +₹200</td>
+              <td><div class="trend-mini" id="tm-coriander"></div></td>
+            </tr>
+            <tr data-cat="spice" data-name="chilli" data-modal="9800" data-delta="-120">
+              <td><div class="crop-cell"><div class="crop-emoji-sm">🌶️</div><div><div class="crop-name-cell">Red Chilli</div><div class="crop-variety">Sannam S4</div></div></div></td>
+              <td><span class="cat-badge cat-spice">🌶️ Spice</span></td>
+              <td>Jodhpur</td><td>₹9,200</td><td>₹10,400</td>
+              <td class="price-cell">₹9,800</td>
+              <td class="delta-cell" style="color:#ef4444">↓ −₹120</td>
+              <td><div class="trend-mini" id="tm-chilli"></div></td>
+            </tr>
+            <!-- FRUITS -->
+            <tr data-cat="fruit" data-name="pomegranate" data-modal="6400" data-delta="280">
+              <td><div class="crop-cell"><div class="crop-emoji-sm">🍎</div><div><div class="crop-name-cell">Pomegranate</div><div class="crop-variety">Bhagwa</div></div></div></td>
+              <td><span class="cat-badge cat-fruit">🍇 Fruit</span></td>
+              <td>Jalore</td><td>₹5,800</td><td>₹7,000</td>
+              <td class="price-cell">₹6,400</td>
+              <td class="delta-cell" style="color:#16a34a">↑ +₹280</td>
+              <td><div class="trend-mini" id="tm-pomegranate"></div></td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="no-results" id="noResults">😔 No crops found. Try a different filter or search term.</div>
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN -->
+    <div class="right-col">
+      <!-- AI BANNER -->
+      <div class="ai-banner">
+        <div class="aib-tag">🤖 AI Recommendation · Today</div>
+        <div class="aib-main">Sell Wheat at Jaipur — ₹170 more per quintal vs local</div>
+        <div class="aib-sub">Garlic & Mustard also showing strong upward trend. Hold Chana — price expected to recover in 4–5 days.</div>
+        <a href="#" class="aib-btn">View Full AI Forecast →</a>
+      </div>
+
+      <!-- FORECAST CHART -->
+      <div class="fc-card">
+        <div class="fc-head">
+          <div><div class="fc-title">AI Price Forecast</div><div class="fc-sub" id="forecastCropLabel">Wheat · Next 7 days</div></div>
+          <span class="fc-badge">AI Powered</span>
+        </div>
+        <!-- Crop selector -->
+        <div class="crop-selector">
+          <button class="cs-btn active" onclick="switchForecast(this,'wheat')">Wheat</button>
+          <button class="cs-btn" onclick="switchForecast(this,'moong')">Moong</button>
+          <button class="cs-btn" onclick="switchForecast(this,'mustard')">Mustard</button>
+          <button class="cs-btn" onclick="switchForecast(this,'garlic')">Garlic</button>
+        </div>
+        <div class="chart-area" id="forecast-chart"></div>
+        <div class="chart-labels" id="forecast-labels"></div>
+        <div class="forecast-stats" id="forecast-stats">
+          <div class="fs-item"><div class="fs-label">Today</div><div class="fs-val" id="fs-today">₹2,450</div></div>
+          <div class="fs-item"><div class="fs-label">Peak Day</div><div class="fs-val" style="color:#15803d" id="fs-peak">₹2,680</div></div>
+          <div class="fs-item"><div class="fs-label">Signal</div><div class="fs-val" style="color:#15803d;font-size:11px" id="fs-signal">↑ HOLD & SELL</div></div>
+        </div>
+      </div>
+
+      <!-- BEST MANDI -->
+      <div class="fc-card">
+        <div class="fc-head" style="margin-bottom:12px">
+          <div><div class="fc-title">Best Mandi Today</div><div class="fc-sub">For Wheat — Near Ajmer</div></div>
+        </div>
+        <div class="bm-row"><div class="bm-rank r1">🥇</div><div><div class="bm-name">Jaipur Mandi</div><div class="bm-dist">45 km · Open till 7 PM</div></div><div style="text-align:right"><div class="bm-price">₹2,450</div><div class="bm-trend" style="color:#16a34a">↑ Best</div></div></div>
+        <div class="bm-row"><div class="bm-rank r2">2</div><div><div class="bm-name">Kishangarh Mandi</div><div class="bm-dist">28 km · Open till 5 PM</div></div><div style="text-align:right"><div class="bm-price">₹2,310</div><div class="bm-trend" style="color:#94a3b8">↑ Good</div></div></div>
+        <div class="bm-row"><div class="bm-rank r3">3</div><div><div class="bm-name">Ajmer Mandi</div><div class="bm-dist">12 km · Open till 5 PM</div></div><div style="text-align:right"><div class="bm-price">₹2,280</div><div class="bm-trend" style="color:#94a3b8">→ Avg</div></div></div>
+        <div class="bm-row"><div class="bm-rank r4">4</div><div><div class="bm-name">Beawar Mandi</div><div class="bm-dist">54 km · Open till 6 PM</div></div><div style="text-align:right"><div class="bm-price">₹2,140</div><div class="bm-trend" style="color:#ef4444">↓ Low</div></div></div>
+        <a href="#" class="btn btn-green full-width" style="justify-content:center;margin-top:12px;font-size:13px;display:flex">📍 Get Directions →</a>
+      </div>
+
+      <!-- CATEGORY PERFORMANCE -->
+      <div class="fc-card">
+        <div class="fc-title" style="margin-bottom:14px">📊 Category Performance</div>
+        <div class="cs-row"><div class="cs-left"><span style="font-size:18px">🌾</span><div><div class="cs-cat">Cereals</div><div class="cs-count">3 crops</div></div></div><div class="cs-bar-wrap"><div class="cs-bar-fill" style="width:70%;background:linear-gradient(90deg,#f59e0b,#fbbf24)"></div></div><div class="cs-status" style="color:#f59e0b">↑ Rising</div></div>
+        <div class="cs-row"><div class="cs-left"><span style="font-size:18px">🥦</span><div><div class="cs-cat">Vegetables</div><div class="cs-count">6 crops</div></div></div><div class="cs-bar-wrap"><div class="cs-bar-fill" style="width:55%;background:linear-gradient(90deg,#22c55e,#4ade80)"></div></div><div class="cs-status" style="color:#22c55e">↑ Mixed</div></div>
+        <div class="cs-row"><div class="cs-left"><span style="font-size:18px">🫘</span><div><div class="cs-cat">Pulses</div><div class="cs-count">3 crops</div></div></div><div class="cs-bar-wrap"><div class="cs-bar-fill" style="width:85%;background:linear-gradient(90deg,#3b82f6,#60a5fa)"></div></div><div class="cs-status" style="color:#3b82f6">↑ Strong</div></div>
+        <div class="cs-row"><div class="cs-left"><span style="font-size:18px">🥜</span><div><div class="cs-cat">Oilseeds</div><div class="cs-count">3 crops</div></div></div><div class="cs-bar-wrap"><div class="cs-bar-fill" style="width:60%;background:linear-gradient(90deg,#f97316,#fb923c)"></div></div><div class="cs-status" style="color:#f97316">→ Stable</div></div>
+        <div class="cs-row"><div class="cs-left"><span style="font-size:18px">🌶️</span><div><div class="cs-cat">Spices</div><div class="cs-count">2 crops</div></div></div><div class="cs-bar-wrap"><div class="cs-bar-fill" style="width:90%;background:linear-gradient(90deg,#ec4899,#f472b6)"></div></div><div class="cs-status" style="color:#ec4899">↑ Best!</div></div>
+        <div class="cs-row"><div class="cs-left"><span style="font-size:18px">🍇</span><div><div class="cs-cat">Fruits</div><div class="cs-count">1 crop</div></div></div><div class="cs-bar-wrap"><div class="cs-bar-fill" style="width:75%;background:linear-gradient(90deg,#a855f7,#c084fc)"></div></div><div class="cs-status" style="color:#a855f7">↑ Good</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-bottom" style="border-top:none;padding-top:0">
+      <div class="footer-copy">© 2026 कृषि AI🌾 · Alpha Coders — GEC Ajmer</div>
+      <div class="footer-team">Built with ❤️ for Indian Farmers 🌱</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ── CATEGORY FILTER (FULLY WORKING) ──
+let currentCat='all', currentSearch='';
+
+function filterCat(pill, cat){
+  document.querySelectorAll('.cat-pill').forEach(p=>p.classList.remove('active'));
+  pill.classList.add('active');
+  currentCat=cat;
+  applyFilters();
+}
+
+function searchCrops(val){
+  currentSearch=val.toLowerCase().trim();
+  applyFilters();
+}
+
+function applyFilters(){
+  const rows=document.querySelectorAll('#tableBody tr');
+  let visible=0;
+  rows.forEach(row=>{
+    const cat=row.dataset.cat||'';
+    const text=row.textContent.toLowerCase();
+    const catOk=currentCat==='all'||cat===currentCat;
+    const srchOk=currentSearch===''||text.includes(currentSearch);
+    if(catOk&&srchOk){row.style.display='';visible++;}
+    else{row.style.display='none';}
+  });
+  document.getElementById('crop-count').textContent=visible;
+  document.getElementById('crop-count2').textContent=visible;
+  document.getElementById('noResults').style.display=visible===0?'block':'none';
+}
+
+function sortTable(by){
+  const tbody=document.getElementById('tableBody');
+  const rows=Array.from(tbody.querySelectorAll('tr'));
+  rows.sort((a,b)=>{
+    const am=parseInt(a.dataset.modal),bm=parseInt(b.dataset.modal);
+    const ad=parseInt(a.dataset.delta),bd=parseInt(b.dataset.delta);
+    if(by==='high')return bm-am;
+    if(by==='low')return am-bm;
+    if(by==='gain')return bd-ad;
+    return bm-am;
+  });
+  rows.forEach(r=>tbody.appendChild(r));
+}
+
+// ── TREND BARS ──
+function mkTrend(id,vals,up){
+  const el=document.getElementById(id);if(!el)return;
+  const mx=Math.max(...vals),col=up?'#22c55e':'#ef4444';
+  vals.forEach((v,i)=>{
+    const b=document.createElement('div');
+    b.style.cssText=`flex:1;background:${col};opacity:${i===vals.length-1?'1':'0.25'};border-radius:2px 2px 0 0;height:${Math.round(v/mx*100)}%`;
+    el.appendChild(b);
+  });
+}
+function mkTM(id,vals,up){
+  const el=document.getElementById(id);if(!el)return;
+  const mx=Math.max(...vals),col=up?'#22c55e':'#ef4444';
+  vals.forEach(v=>{
+    const b=document.createElement('div');b.className='tm-bar';
+    b.style.cssText=`width:5px;background:${col};border-radius:1px 1px 0 0;height:${Math.round(v/mx*100)}%`;
+    el.appendChild(b);
+  });
+}
+
+mkTrend('trend-wheat',[2200,2250,2280,2320,2370,2410,2450],true);
+mkTrend('trend-garlic',[7200,7400,7600,7800,7900,8050,8200],true);
+mkTrend('trend-moong',[6700,6800,6900,6980,7050,7120,7200],true);
+mkTrend('trend-chilli',[10400,10200,10100,10000,9950,9900,9800],false);
+
+mkTM('tm-wheat',[2200,2250,2280,2320,2370,2410,2450],true);
+mkTM('tm-maize',[2000,1980,1970,1960,1940,1945,1920],false);
+mkTM('tm-barley',[1560,1580,1600,1620,1640,1660,1680],true);
+mkTM('tm-onion',[1200,1250,1300,1350,1380,1420,1450],true);
+mkTM('tm-tomato',[1100,1060,1040,1020,1010,990,980],false);
+mkTM('tm-potato',[1020,1040,1060,1080,1090,1110,1120],true);
+mkTM('tm-garlic',[7200,7400,7600,7800,7900,8050,8200],true);
+mkTM('tm-cauli',[1100,1150,1200,1250,1290,1320,1350],true);
+mkTM('tm-brinjal',[940,920,910,900,890,870,860],false);
+mkTM('tm-moong',[6700,6800,6900,6980,7050,7120,7200],true);
+mkTM('tm-chana',[5800,5700,5650,5600,5550,5480,5400],false);
+mkTM('tm-masoor',[5700,5780,5850,5900,5960,6020,6100],true);
+mkTM('tm-mustard',[5000,5100,5200,5300,5380,5500,5600],true);
+mkTM('tm-soybean',[3700,3800,3850,3900,3960,3990,4020],true);
+mkTM('tm-groundnut',[5400,5300,5280,5200,5150,5100,5100],false);
+mkTM('tm-coriander',[6000,6100,6200,6300,6400,6500,6600],true);
+mkTM('tm-chilli',[10400,10200,10100,10000,9950,9900,9800],false);
+mkTM('tm-pomegranate',[5400,5600,5800,5900,6100,6200,6400],true);
+
+// ── FORECAST CHART ──
+const forecasts={
+  wheat:{vals:[2450,2490,2520,2580,2640,2680,2650],label:'Wheat · Next 7 days',today:'₹2,450',peak:'₹2,680',signal:'↑ HOLD & SELL'},
+  moong:{vals:[7200,7280,7350,7400,7380,7320,7300],label:'Moong Dal · Next 7 days',today:'₹7,200',peak:'₹7,400',signal:'↑ SELL SOON'},
+  mustard:{vals:[5600,5680,5750,5820,5900,5960,5940],label:'Mustard · Next 7 days',today:'₹5,600',peak:'₹5,960',signal:'↑ HOLD'},
+  garlic:{vals:[8200,8350,8500,8650,8700,8620,8580],label:'Garlic · Next 7 days',today:'₹8,200',peak:'₹8,700',signal:'↑ HOLD TILL D5'},
+};
+
+function drawForecast(key){
+  const d=forecasts[key];
+  const days=['Today','D2','D3','D4','D5','D6','D7'];
+  const mn=Math.min(...d.vals),mx=Math.max(...d.vals);
+  const chartEl=document.getElementById('forecast-chart');
+  const labelsEl=document.getElementById('forecast-labels');
+  chartEl.innerHTML='';labelsEl.innerHTML='';
+  d.vals.forEach((v,i)=>{
+    const isBest=v===mx;
+    const col=isBest?'#15803d':(v>=d.vals[0]?'#4ade80':'#86efac');
+    const pct=Math.round((v-mn)/(mx-mn)*65)+25;
+    const b=document.createElement('div');b.className='chart-bar';
+    b.style.cssText=`flex:1;background:${col};height:${pct}%;border-radius:4px 4px 0 0;position:relative`;
+    if(isBest)b.style.boxShadow='0 0 12px rgba(22,163,74,0.4)';
+    const lbl=document.createElement('div');lbl.className='chart-val';lbl.textContent='₹'+v.toLocaleString('en-IN');
+    b.appendChild(lbl);
+    chartEl.appendChild(b);
+    const dl=document.createElement('div');dl.className='cl-item';dl.textContent=days[i];
+    labelsEl.appendChild(dl);
+  });
+  document.getElementById('forecastCropLabel').textContent=d.label;
+  document.getElementById('fs-today').textContent=d.today;
+  document.getElementById('fs-peak').textContent=d.peak;
+  document.getElementById('fs-signal').textContent=d.signal;
+}
+
+function switchForecast(btn,key){
+  document.querySelectorAll('.cs-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  drawForecast(key);
+}
+
+drawForecast('wheat');
+</script>
+<script src="anim.js"></script>
+</body>
+</html>

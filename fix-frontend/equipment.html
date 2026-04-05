@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Equipment Rent — कृषि AI</title>
+<link rel="stylesheet" href="style.css">
+<style>
+body{padding-top:64px}
+.content{max-width:1200px;margin:0 auto;padding:32px 5%}
+
+/* FILTER BAR */
+.filter-bar{display:flex;align-items:center;gap:10px;margin-bottom:24px;flex-wrap:wrap}
+.fcat{padding:7px 16px;border-radius:20px;border:1.5px solid var(--border);background:#fff;font-size:13px;font-weight:600;color:var(--text2);cursor:pointer;transition:all 0.15s;font-family:'Outfit',sans-serif}
+.fcat:hover{border-color:var(--g300);color:var(--g700)}
+.fcat.active{background:var(--g600);color:#fff;border-color:var(--g600)}
+.fsort{padding:7px 14px;border-radius:10px;border:1px solid var(--border);background:#fff;font-size:13px;color:var(--text2);font-family:'Outfit',sans-serif;cursor:pointer;margin-left:auto}
+.avail-toggle{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--text2);cursor:pointer}
+.avail-toggle input{accent-color:var(--g600);width:16px;height:16px;cursor:pointer}
+
+/* STATS ROW */
+.stats-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:24px}
+.scard{background:#fff;border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center}
+.scard-num{font-size:26px;font-weight:800;color:var(--g700)}
+.scard-label{font-size:11px;color:var(--text3);margin-top:3px}
+
+/* EQUIPMENT GRID */
+.eq-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.eq-card{background:#fff;border:1px solid var(--border);border-radius:16px;overflow:hidden;transition:all 0.2s;position:relative}
+.eq-card:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,0.1);border-color:var(--g200)}
+.eq-card.unavailable{opacity:0.7}
+.eq-img{height:100px;display:flex;align-items:center;justify-content:center;font-size:48px;background:linear-gradient(135deg,#f0fdf4,#dcfce7)}
+.eq-unavail-banner{position:absolute;top:12px;right:12px;background:#fef2f2;color:#991b1b;font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;border:1px solid #fecaca}
+.eq-avail-banner{position:absolute;top:12px;right:12px;background:#f0fdf4;color:#15803d;font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;border:1px solid #bbf7d0}
+.eq-body{padding:14px 16px}
+.eq-name{font-size:15px;font-weight:700;color:var(--text);margin-bottom:3px}
+.eq-owner{font-size:12px;color:var(--text3);margin-bottom:8px}
+.eq-specs{font-size:11px;color:var(--text2);background:#f8faf6;border-radius:6px;padding:5px 8px;margin-bottom:10px}
+.eq-meta{display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+.eq-dist{font-size:12px;color:var(--text3);display:flex;align-items:center;gap:3px}
+.eq-rating{font-size:12px;font-weight:600;color:#92400e;background:#fef3c7;padding:2px 7px;border-radius:10px}
+.eq-price-row{display:flex;align-items:center;justify-content:space-between;padding-top:10px;border-top:1px solid var(--border)}
+.eq-price{font-size:17px;font-weight:800;color:var(--text)}
+.eq-price-unit{font-size:11px;color:var(--text3);font-weight:400}
+.eq-book-btn{padding:8px 16px;background:var(--g600);color:#fff;border:none;border-radius:9px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;transition:all 0.15s}
+.eq-book-btn:hover{background:var(--g700)}
+.eq-book-btn:disabled{background:#e2e8f0;color:#94a3b8;cursor:not-allowed}
+
+/* BOOKING MODAL */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:200;align-items:center;justify-content:center}
+.modal-bg.open{display:flex}
+.modal{background:#fff;border-radius:20px;padding:28px;width:100%;max-width:440px;position:relative}
+.modal-close{position:absolute;top:16px;right:16px;background:none;border:none;font-size:20px;cursor:pointer;color:var(--text3);line-height:1}
+.modal-title{font-size:18px;font-weight:700;color:var(--text);margin-bottom:4px}
+.modal-sub{font-size:13px;color:var(--text3);margin-bottom:20px}
+.form-group{margin-bottom:14px}
+.form-label{font-size:12px;font-weight:600;color:var(--text2);display:block;margin-bottom:5px}
+.form-input,.form-select{width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:9px;font-size:13px;font-family:'Outfit',sans-serif;outline:none;transition:border-color 0.15s}
+.form-input:focus,.form-select:focus{border-color:var(--g500)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.submit-btn{width:100%;padding:12px;background:var(--g600);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;margin-top:6px;transition:background 0.15s}
+.submit-btn:hover{background:var(--g700)}
+.confirm-box{background:#f0fdf4;border:1px solid var(--g200);border-radius:10px;padding:14px;text-align:center;display:none}
+.confirm-icon{font-size:32px;margin-bottom:8px}
+.confirm-title{font-size:16px;font-weight:700;color:var(--g800)}
+.confirm-sub{font-size:13px;color:var(--g700);margin-top:4px}
+
+/* EMPTY STATE */
+.empty-state{text-align:center;padding:60px 20px;color:var(--text3)}
+.empty-icon{font-size:48px;margin-bottom:12px}
+.empty-text{font-size:15px;font-weight:600;color:var(--text2)}
+
+/* LOADING */
+.loading-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.skel{background:linear-gradient(90deg,#f1f5f9 25%,#e2e8f0 50%,#f1f5f9 75%);background-size:200% 100%;animation:shimmer 1.2s infinite;border-radius:16px;height:220px}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+</style>
+</head>
+<body>
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 2C7 2 4 5.5 4 9.5c0 3 1.5 5.5 3.8 6.8L10 18l2.2-1.7C14.5 15 16 12.5 16 9.5 16 5.5 13 2 10 2z" fill="rgba(255,255,255,0.95)"/><path d="M10 7v5M8 9l2-2 2 2" stroke="rgba(21,128,61,0.9)" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+      <div class="nav-logo-text">कृषि<span>AI</span>🌾</div>
+    </a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="disease.html">Disease AI</a>
+      <a href="market.html">Market</a>
+      <a href="schemes.html">Schemes</a>
+      <a href="about.html">About</a>
+    </div>
+    <a href="dashboard.html" class="btn btn-green" style="font-size:13px;padding:8px 18px;">Dashboard →</a>
+  </div>
+</nav>
+
+<div class="page-hero">
+  <div class="page-hero-inner">
+    <div class="section-tag" style="background:rgba(74,222,128,0.15);border-color:rgba(74,222,128,0.3);color:#86efac;margin-bottom:14px">Ajmer District · Near You First</div>
+    <h1>🚜 Equipment Rental</h1>
+    <p>Rent tractors, harvesters, sprayers and more from farmers near you. Book in seconds, pay the owner directly.</p>
+  </div>
+</div>
+
+<div class="content">
+  <!-- SHARE EQUIPMENT FORM -->
+  <div id="share-equipment" class="dcard" style="background:#fff;border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:20px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px"><h2 style="font-size:16px;margin:0">🚜 Share Equipment</h2><span style="font-size:12px;color:var(--text3)">Post your own rental listing</span></div>
+    <div class="form-row" style="grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:10px">
+      <div class="form-group" style="margin:0"><label class="form-label">Your Name</label><input class="form-input" id="share-name" type="text" placeholder="Ramesh"></div>
+      <div class="form-group" style="margin:0"><label class="form-label">Contact Number</label><input class="form-input" id="share-phone" type="tel" placeholder="9876543210"></div>
+    </div>
+    <div class="form-row" style="grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:10px">
+      <div class="form-group" style="margin:0"><label class="form-label">Equipment</label><input class="form-input" id="share-name-equipment" type="text" placeholder="Tractor 5050D"></div>
+      <div class="form-group" style="margin:0"><label class="form-label">Category</label><select class="form-select" id="share-category"><option value="tractor">Tractor</option><option value="harvester">Harvester</option><option value="tillage">Tillage</option><option value="seeding">Seeding</option><option value="sprayer">Sprayer</option><option value="irrigation">Irrigation</option></select></div>
+    </div>
+    <div class="form-row" style="grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:10px">
+      <div class="form-group" style="margin:0"><label class="form-label">Price/Day (₹)</label><input class="form-input" id="share-price" type="number" min="0" placeholder="1200"></div>
+      <div class="form-group" style="margin:0"><label class="form-label">Location</label><input class="form-input" id="share-location" type="text" placeholder="Ajmer"></div>
+    </div>
+    <div class="form-group" style="margin-bottom:10px"><label class="form-label">Details</label><input class="form-input" id="share-details" type="text" placeholder="8h/day, diesel"></div>
+    <div style="display:flex;align-items:center;gap:10px"><button class="submit-btn" id="share-submit" style="width:auto;">Publish Listing</button><span id="share-feedback" style="font-size:13px;color:var(--text3)"></span></div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-row">
+    <div class="scard"><div class="scard-num" id="stat-total">--</div><div class="scard-label">Total Equipment</div></div>
+    <div class="scard"><div class="scard-num" id="stat-avail" style="color:#16a34a">--</div><div class="scard-label">Available Now</div></div>
+    <div class="scard"><div class="scard-num" id="stat-min">--</div><div class="scard-label">Min Price/Day</div></div>
+    <div class="scard"><div class="scard-num" id="stat-dist">--</div><div class="scard-label">Nearest (km)</div></div>
+  </div>
+
+  <!-- FILTERS -->
+  <div class="filter-bar">
+    <button class="fcat active" onclick="setCategory(this,'all')">All</button>
+    <button class="fcat" onclick="setCategory(this,'tractor')">🚜 Tractors</button>
+    <button class="fcat" onclick="setCategory(this,'harvester')">🌾 Harvesters</button>
+    <button class="fcat" onclick="setCategory(this,'tillage')">⚙️ Tillage</button>
+    <button class="fcat" onclick="setCategory(this,'seeding')">🌱 Seeding</button>
+    <button class="fcat" onclick="setCategory(this,'sprayer')">💦 Sprayers</button>
+    <button class="fcat" onclick="setCategory(this,'irrigation')">💧 Irrigation</button>
+    <label class="avail-toggle"><input type="checkbox" id="avail-only" onchange="loadEquipment()"> Available only</label>
+    <select class="fsort" id="sort-select" onchange="loadEquipment()">
+      <option value="distance">Sort: Nearest first</option>
+      <option value="price">Sort: Lowest price</option>
+      <option value="rating">Sort: Best rated</option>
+    </select>
+  </div>
+
+  <!-- GRID -->
+  <div id="eq-grid" class="eq-grid">
+    <div class="skel"></div><div class="skel"></div><div class="skel"></div>
+  </div>
+</div>
+
+<!-- BOOKING MODAL -->
+<div class="modal-bg" id="modal-bg" onclick="closeModal(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModalDirect()">✕</button>
+    <div id="book-form-wrap">
+      <div class="modal-title" id="modal-eq-name">Book Equipment</div>
+      <div class="modal-sub" id="modal-eq-sub">Fill details to confirm booking</div>
+      <div class="form-group">
+        <label class="form-label">Your Name</label>
+        <input class="form-input" id="book-name" placeholder="Ramesh Kumar" type="text">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Mobile Number</label>
+        <input class="form-input" id="book-phone" placeholder="9876543210" type="tel">
+      </div>
+      <div class="form-row">
+        <div class="form-group" style="margin:0">
+          <label class="form-label">Date Needed</label>
+          <input class="form-input" id="book-date" type="date">
+        </div>
+        <div class="form-group" style="margin:0">
+          <label class="form-label">Days Required</label>
+          <input class="form-input" id="book-days" type="number" value="1" min="1" max="30">
+        </div>
+      </div>
+      <div class="form-group" style="margin-top:14px">
+        <label class="form-label">Purpose (optional)</label>
+        <input class="form-input" id="book-purpose" placeholder="e.g. Wheat harvesting, 2 acres">
+      </div>
+      <div id="cost-preview" style="background:#f0fdf4;border-radius:9px;padding:10px 14px;margin:12px 0;font-size:13px;font-weight:600;color:var(--g800);display:none"></div>
+      <button class="submit-btn" onclick="submitBooking()">Confirm Booking →</button>
+    </div>
+    <div class="confirm-box" id="confirm-box">
+      <div class="confirm-icon">✅</div>
+      <div class="confirm-title" id="confirm-title">Booking Confirmed!</div>
+      <div class="confirm-sub" id="confirm-sub">Owner ko call karo</div>
+      <div id="confirm-phone" style="font-size:20px;font-weight:800;color:var(--g700);margin:10px 0"></div>
+      <div id="confirm-ref" style="font-size:11px;color:var(--text3)"></div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-bottom" style="border-top:none;padding-top:0">
+      <div class="footer-copy">© 2026 कृषि AI · Alpha Coders — GEC Ajmer</div>
+      <div class="footer-team">Built with ❤️ for Indian Farmers 🌱</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ─── AUTO-DETECT BACKEND URL ───────────────────────
+// Kaam karta hai: Live Server, file://, aur kisi bhi IP pe
+const BACKEND_IP   = window.location.hostname === 'localhost' || 
+                     window.location.hostname === '127.0.0.1' || 
+                     window.location.hostname === ''
+                     ? '10.109.254.121'   // ← Apna PC IP yahan (ipconfig se dekho)
+                     : window.location.hostname;
+const BACKEND_PORT = '5000';
+const API_BASE     = `http://${BACKEND_IP}:${BACKEND_PORT}/api`;
+
+let allEquipment = [];
+let activeCategory = 'all';
+let selectedEq = null;
+
+// ── Load Equipment ─────────────────────────────
+async function loadEquipment() {
+  const availOnly = document.getElementById('avail-only').checked;
+  const sort      = document.getElementById('sort-select').value;
+  let url = `${API_BASE}/equipment?sort=${sort}`;
+  if (activeCategory !== 'all') url += `&category=${activeCategory}`;
+  if (availOnly) url += `&available=true`;
+
+  document.getElementById('eq-grid').innerHTML =
+    '<div class="skel"></div><div class="skel"></div><div class="skel"></div>';
+
+  try {
+    const res  = await fetch(url);
+    const json = await res.json();
+    if (!json.success) throw new Error('API error');
+    const sharedSaved = JSON.parse(localStorage.getItem('sharedEquipment') || '[]');
+    allEquipment = [...sharedSaved, ...json.equipment];
+    renderEquipment(allEquipment);
+    updateStats(allEquipment);
+  } catch(err) {
+    console.warn('Equipment fetch failed:', err.message);
+    document.getElementById('eq-grid').innerHTML =
+      '<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">⚠️</div><div class="empty-text">Backend se connect nahi ho pa raha — npm start karo</div></div>';
+  }
+}
+
+function updateStats(list) {
+  const avail = list.filter(e => e.available).length;
+  const minP  = Math.min(...list.map(e => e.pricePerDay));
+  const minD  = Math.min(...list.map(e => e.distance));
+  document.getElementById('stat-total').textContent = list.length;
+  document.getElementById('stat-avail').textContent = avail;
+  document.getElementById('stat-min').textContent   = '₹' + minP;
+  document.getElementById('stat-dist').textContent  = minD.toFixed(1);
+}
+
+function renderEquipment(list) {
+  const grid = document.getElementById('eq-grid');
+  if (!list.length) {
+    grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">🚜</div><div class="empty-text">Is category mein koi equipment nahi mili</div></div>';
+    return;
+  }
+  grid.innerHTML = list.map(eq => `
+    <div class="eq-card ${eq.available ? '' : 'unavailable'}">
+      <div class="eq-img">${eq.image}</div>
+      <span class="${eq.available ? 'eq-avail-banner' : 'eq-unavail-banner'}">${eq.available ? '✅ Available' : '❌ Booked'}</span>
+      <div class="eq-body">
+        <div class="eq-name">${eq.name}</div>
+        <div class="eq-owner">👤 ${eq.owner} · ${eq.location}</div>
+        <div class="eq-specs">📋 ${eq.specs}</div>
+        <div class="eq-meta">
+          <span class="eq-dist">📍 ${eq.distance} km away</span>
+          <span class="eq-rating">⭐ ${eq.rating} (${eq.reviews})</span>
+        </div>
+        <div class="eq-price-row">
+          <div>
+            <span class="eq-price">₹${eq.pricePerDay.toLocaleString('en-IN')}</span>
+            <span class="eq-price-unit">/day</span>
+            <div style="font-size:10px;color:var(--text3)">₹${eq.pricePerHour}/hour also available</div>
+          </div>
+          <button class="eq-book-btn" ${eq.available ? '' : 'disabled'} onclick="openBooking('${eq.id}')">
+            ${eq.available ? 'Book Now' : 'Unavailable'}
+          </button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function setCategory(el, cat) {
+  document.querySelectorAll('.fcat').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  activeCategory = cat;
+  loadEquipment();
+}
+
+// ── Booking Modal ──────────────────────────────
+function openBooking(eqId) {
+  selectedEq = allEquipment.find(e => e.id === eqId);
+  if (!selectedEq) return;
+  document.getElementById('modal-eq-name').textContent = 'Book: ' + selectedEq.name;
+  document.getElementById('modal-eq-sub').textContent  = '📍 ' + selectedEq.location + ' · ₹' + selectedEq.pricePerDay + '/day';
+  document.getElementById('book-form-wrap').style.display = 'block';
+  document.getElementById('confirm-box').style.display    = 'none';
+  // Set min date to today
+  document.getElementById('book-date').min = new Date().toISOString().split('T')[0];
+  document.getElementById('book-date').value = new Date().toISOString().split('T')[0];
+  document.getElementById('book-days').value = 1;
+  updateCostPreview();
+  document.getElementById('modal-bg').classList.add('open');
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const daysInput = document.getElementById('book-days');
+  if(daysInput) daysInput.addEventListener('input', updateCostPreview);
+});
+
+function updateCostPreview() {
+  if (!selectedEq) return;
+  const days = parseInt(document.getElementById('book-days').value) || 1;
+  const total = days * selectedEq.pricePerDay;
+  const prev = document.getElementById('cost-preview');
+  prev.style.display = 'block';
+  prev.textContent = `💰 Total: ₹${total.toLocaleString('en-IN')} (${days} day${days>1?'s':''} × ₹${selectedEq.pricePerDay})`;
+}
+
+function closeModal(e) { if(e.target.id === 'modal-bg') closeModalDirect(); }
+function closeModalDirect() { document.getElementById('modal-bg').classList.remove('open'); }
+
+function initShareForm() {
+  const form = document.getElementById('share-submit');
+  const feedback = document.getElementById('share-feedback');
+  form.addEventListener('click', function(event) {
+    event.preventDefault();
+    const name = document.getElementById('share-name').value.trim();
+    const phone = document.getElementById('share-phone').value.trim();
+    const eqName = document.getElementById('share-name-equipment').value.trim();
+    const category = document.getElementById('share-category').value;
+    const price = document.getElementById('share-price').value.trim();
+    const location = document.getElementById('share-location').value.trim();
+    if (!name || !phone || !eqName || !price || !location) {
+      feedback.textContent = 'कृपया सभी जरूरी फील्ड भरें';
+      feedback.style.color = '#dc2626';
+      return;
+    }
+    feedback.textContent = 'Successfully submitted. Thank you!';
+    feedback.style.color = '#16a34a';
+    form.textContent = 'Submitted ✓';
+    setTimeout(() => {
+      form.textContent = 'Publish Listing';
+      feedback.textContent = '';
+    }, 2500);
+    document.getElementById('share-name').value = '';
+    document.getElementById('share-phone').value = '';
+    document.getElementById('share-name-equipment').value = '';
+    document.getElementById('share-price').value = '';
+    document.getElementById('share-location').value = '';
+    document.getElementById('share-details').value = '';
+    // Additional: add to equipment grid quickly
+    const details = document.getElementById('share-details').value.trim();
+    const newEq = {
+      id: 'new-' + Date.now(),
+      image: '🚜',
+      name: eqName,
+      owner: name,
+      location: location,
+      specs: details || 'N/A',
+      distance: 1.2,
+      rating: 4.8,
+      reviews: 3,
+      pricePerDay: Number(price),
+      pricePerHour: Math.round(Number(price)/12),
+      available: true
+    };
+    allEquipment.unshift(newEq);
+    const saved = JSON.parse(localStorage.getItem('sharedEquipment') || '[]');
+    saved.unshift(newEq);
+    localStorage.setItem('sharedEquipment', JSON.stringify(saved));
+    renderEquipment(allEquipment);
+    updateStats(allEquipment);
+  });
+}
+
+function initEquipmentScrollFromHash() {
+  if (window.location.hash === '#share-equipment') {
+    const el = document.getElementById('share-equipment');
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      document.getElementById('share-name').focus();
+    }
+  }
+}
+
+async function submitBooking() {
+  const name    = document.getElementById('book-name').value.trim();
+  const phone   = document.getElementById('book-phone').value.trim();
+  const date    = document.getElementById('book-date').value;
+  const days    = document.getElementById('book-days').value;
+  const purpose = document.getElementById('book-purpose').value.trim();
+
+  if (!name || !phone || !date) { alert('Please fill Name, Phone and Date'); return; }
+  if (phone.length < 10) { alert('Valid 10-digit phone number daalo'); return; }
+
+  const btn = document.querySelector('.submit-btn');
+  btn.textContent = 'Booking...'; btn.disabled = true;
+
+  try {
+    const res  = await fetch(`${API_BASE}/equipment/book`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ equipmentId: selectedEq.id, farmerName: name, phone, date, days: parseInt(days), purpose })
+    });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.message);
+
+    document.getElementById('book-form-wrap').style.display = 'none';
+    document.getElementById('confirm-box').style.display    = 'block';
+    document.getElementById('confirm-title').textContent   = 'Booking Confirmed! 🎉';
+    document.getElementById('confirm-sub').textContent     = `${selectedEq.name} · ${date} · ${days} day(s)`;
+    document.getElementById('confirm-phone').textContent   = '📞 ' + selectedEq.phone;
+    document.getElementById('confirm-ref').textContent     = 'Ref: ' + json.booking.id;
+  } catch(err) {
+    alert('Booking failed: ' + err.message);
+  } finally {
+    btn.textContent = 'Confirm Booking →'; btn.disabled = false;
+  }
+}
+
+// Init
+document.addEventListener('DOMContentLoaded', function() {
+  loadEquipment();
+  initShareForm();
+  initEquipmentScrollFromHash();
+});
+</script>
+<script src="anim.js"></script>
+</body>
+</html>

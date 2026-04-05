@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Government Schemes — कृषि AI🌾</title>
+<link rel="stylesheet" href="style.css">
+<style>
+body{padding-top:64px}
+.content{max-width:1200px;margin:0 auto;padding:40px 5%}
+.schemes-layout{display:grid;grid-template-columns:300px 1fr;gap:28px;align-items:start}
+
+/* ELIGIBILITY FORM */
+.elig-form{background:#fff;border:1px solid var(--border);border-radius:16px;padding:22px;position:sticky;top:84px}
+.ef-title{font-size:15px;font-weight:700;color:var(--text);margin-bottom:4px}
+.ef-sub{font-size:12px;color:var(--text3);margin-bottom:20px}
+.form-group{margin-bottom:14px}
+.form-label{font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px;display:block}
+.form-input,.form-select{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:9px;font-size:13px;color:var(--text);font-family:'Outfit',sans-serif;outline:none;transition:border-color 0.15s;background:#fff}
+.form-input:focus,.form-select:focus{border-color:var(--g500)}
+.form-select{cursor:pointer}
+.check-btn{width:100%;padding:11px;background:var(--g600);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;transition:all 0.15s;margin-top:6px}
+.check-btn:hover{background:var(--g700)}
+.elig-result{background:var(--g50);border:1px solid var(--g200);border-radius:10px;padding:14px;margin-top:14px;display:none}
+.er-count{font-size:22px;font-weight:800;color:var(--g700)}
+.er-text{font-size:13px;color:var(--g800);margin-top:2px}
+
+/* SCHEME CARDS */
+.schemes-list{display:flex;flex-direction:column;gap:16px}
+.scheme-card{background:#fff;border:1px solid var(--border);border-radius:16px;padding:22px;transition:all 0.2s;cursor:pointer}
+.scheme-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg);border-color:var(--g200)}
+.scheme-card.eligible{border-left:4px solid var(--g500)}
+.sc-header{display:flex;align-items:flex-start;gap:14px;margin-bottom:14px}
+.sc-icon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
+.sc-name{font-size:16px;font-weight:700;color:var(--text);margin-bottom:4px}
+.sc-ministry{font-size:11px;color:var(--text3);font-weight:500}
+.sc-badges{display:flex;gap:6px;flex-wrap:wrap;margin-left:auto}
+.sc-body{font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:14px}
+.sc-details{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px}
+.sc-detail-item{background:#f8faf6;border-radius:8px;padding:10px 12px}
+.sdi-label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:3px}
+.sdi-val{font-size:13px;font-weight:700;color:var(--text)}
+.sc-footer{display:flex;align-items:center;justify-content:space-between}
+.sc-deadline{font-size:12px;color:var(--text3)}
+.apply-btn{padding:8px 20px;background:var(--g600);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;transition:all 0.15s}
+.apply-btn:hover{background:var(--g700)}
+.learn-btn{padding:8px 16px;background:transparent;color:var(--g600);border:1.5px solid var(--g300);border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;transition:all 0.15s}
+.learn-btn:hover{background:var(--g50)}
+
+/* STATS BAR */
+.stats-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px}
+.sb-card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center}
+.sb-num{font-size:24px;font-weight:800;color:var(--g700)}
+.sb-label{font-size:11px;color:var(--text3);margin-top:3px}
+
+/* FILTER TABS */
+.tab-row{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
+.tab{padding:7px 16px;border-radius:20px;border:1.5px solid var(--border);background:#fff;font-size:12px;font-weight:600;color:var(--text2);cursor:pointer;transition:all 0.15s;font-family:'Outfit',sans-serif}
+.tab:hover{border-color:var(--g300);color:var(--g700)}
+.tab.active{background:var(--g600);color:#fff;border-color:var(--g600)}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 2C7 2 4 5.5 4 9.5c0 3 1.5 5.5 3.8 6.8L10 18l2.2-1.7C14.5 15 16 12.5 16 9.5 16 5.5 13 2 10 2z" fill="rgba(255,255,255,0.95)"/><path d="M10 7v5M8 9l2-2 2 2" stroke="rgba(21,128,61,0.9)" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+      <div class="nav-logo-text">कृषि<span>AI</span>🌾</div>
+    </a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="disease.html">Disease AI</a>
+      <a href="market.html">Market</a>
+      <a href="schemes.html" class="active">Schemes</a>
+      <a href="about.html">About</a>
+    </div>
+    <a href="dashboard.html" class="btn btn-green" style="font-size:13px;padding:8px 18px;">Open Dashboard →</a>
+  </div>
+</nav>
+
+<div class="page-hero">
+  <div class="page-hero-inner">
+    <div class="section-tag" style="background:rgba(74,222,128,0.15);border-color:rgba(74,222,128,0.3);color:#86efac;margin-bottom:14px">100+ Schemes · Auto Match</div>
+    <h1>🏛️ Government Scheme Finder</h1>
+    <p>Enter your details and our AI will instantly match you to all eligible central and state government agricultural schemes, subsidies, and benefits.</p>
+  </div>
+</div>
+
+<div class="content">
+  <!-- STATS -->
+  <div class="stats-bar">
+    <div class="sb-card"><div class="sb-num">₹2,000</div><div class="sb-label">PM Kisan per year</div></div>
+    <div class="sb-card"><div class="sb-num">50%</div><div class="sb-label">Equipment subsidy</div></div>
+    <div class="sb-card"><div class="sb-num">100+</div><div class="sb-label">Active schemes</div></div>
+    <div class="sb-card"><div class="sb-num">4.2K</div><div class="sb-label">Farmers benefited</div></div>
+  </div>
+
+  <div class="schemes-layout">
+    <!-- FORM -->
+    <div class="elig-form">
+      <div class="ef-title">Check Your Eligibility</div>
+      <div class="ef-sub">Enter your details to find matching schemes</div>
+      <div class="form-group">
+        <label class="form-label">Land Holding (Hectares)</label>
+        <input class="form-input" type="number" placeholder="e.g. 4.2" id="land">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Farmer Category</label>
+        <select class="form-select" id="category">
+          <option value="">Select category</option>
+          <option>Small (1-2 ha)</option>
+          <option>Marginal (&lt;1 ha)</option>
+          <option>Medium (2-10 ha)</option>
+          <option>Large (&gt;10 ha)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">State</label>
+        <select class="form-select" id="state">
+          <option value="">Select state</option>
+          <option selected>Rajasthan</option>
+          <option>Madhya Pradesh</option>
+          <option>Gujarat</option>
+          <option>Maharashtra</option>
+          <option>Punjab</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Primary Crop</label>
+        <select class="form-select" id="crop">
+          <option value="">Select crop</option>
+          <option>Wheat</option>
+          <option>Rice</option>
+          <option>Maize</option>
+          <option>Soybean</option>
+          <option>Onion</option>
+          <option>Cotton</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Annual Income</label>
+        <select class="form-select">
+          <option>Below ₹1 Lakh</option>
+          <option>₹1–2 Lakh</option>
+          <option>₹2–5 Lakh</option>
+          <option>Above ₹5 Lakh</option>
+        </select>
+      </div>
+      <button class="check-btn" onclick="checkEligibility()">🔍 Find My Schemes</button>
+      <div class="elig-result" id="elig-result">
+        <div class="er-count" id="er-count">8 schemes</div>
+        <div class="er-text">found for you! Highlighted in green below.</div>
+      </div>
+    </div>
+
+    <!-- SCHEMES -->
+    <div>
+      <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:16px;padding:16px 20px;margin-bottom:20px;display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
+        <div style="text-align:center"><div style="font-size:22px;font-weight:800;color:#15803d">12+</div><div style="font-size:11px;color:#64748b">Total Schemes</div></div>
+        <div style="text-align:center"><div style="font-size:22px;font-weight:800;color:#15803d">₹15,000+</div><div style="font-size:11px;color:#64748b">Max Annual Benefit</div></div>
+        <div style="text-align:center"><div style="font-size:22px;font-weight:800;color:#15803d">90%</div><div style="font-size:11px;color:#64748b">Max Subsidy</div></div>
+        <div style="text-align:center"><div style="font-size:22px;font-weight:800;color:#15803d">4,200+</div><div style="font-size:11px;color:#64748b">Farmers Enrolled</div></div>
+      </div>
+      <div class="tab-row">
+        <button class="tab active" onclick="setTab(this,'all')">🌿 All Schemes</button>
+        <button class="tab" onclick="setTab(this,'central')">🏛️ Central Govt</button>
+        <button class="tab" onclick="setTab(this,'state')">📍 Rajasthan State</button>
+        <button class="tab" onclick="setTab(this,'subsidy')">💰 Subsidies</button>
+        <button class="tab" onclick="setTab(this,'insurance')">🛡️ Insurance</button>
+      </div>
+
+      <div class="schemes-list">
+        <div class="scheme-card eligible anim-fade-up anim-delay-1" data-cat="central">
+          <div class="sc-header">
+            <div class="sc-icon" style="background:#fef3c7">💰</div>
+            <div><div class="sc-name">PM Kisan Samman Nidhi</div><div class="sc-ministry">Ministry of Agriculture · Central Govt</div></div>
+            <div class="sc-badges">
+              <span class="badge badge-green">Eligible ✓</span>
+              <span class="badge badge-blue">Income Support</span>
+            </div>
+          </div>
+          <div class="sc-body">Direct income support of ₹6,000 per year to all land-holding farmer families, paid in three equal installments of ₹2,000 directly to bank accounts.</div>
+          <div class="sc-details">
+            <div class="sc-detail-item"><div class="sdi-label">Benefit</div><div class="sdi-val">₹6,000/year</div></div>
+            <div class="sc-detail-item"><div class="sdi-label">Who qualifies</div><div class="sdi-val">All farmers</div></div>
+            <div class="sc-detail-item"><div class="sdi-label">Mode</div><div class="sdi-val">Direct DBT</div></div>
+          </div>
+          <div class="sc-footer">
+            <span class="sc-deadline">📅 Apply anytime · Ongoing</span>
+            <div style="display:flex;gap:8px">
+              <button class="learn-btn">Learn More</button>
+              <button class="apply-btn">Apply Now →</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="scheme-card eligible anim-fade-up anim-delay-2" data-cat="central insurance">
+          <div class="sc-header">
+            <div class="sc-icon" style="background:#ecfdf5">🛡️</div>
+            <div><div class="sc-name">Pradhan Mantri Fasal Bima Yojana</div><div class="sc-ministry">Ministry of Agriculture · Central Govt</div></div>
+            <div class="sc-badges">
+              <span class="badge badge-green">Eligible ✓</span>
+              <span class="badge badge-amber">Crop Insurance</span>
+            </div>
+          </div>
+          <div class="sc-body">Comprehensive crop insurance scheme covering yield losses due to natural calamities, pests, and diseases. Farmer pays only 1.5–5% premium, rest subsidized by government.</div>
+          <div class="sc-details">
+            <div class="sc-detail-item"><div class="sdi-label">Farmer Premium</div><div class="sdi-val">1.5–5%</div></div>
+            <div class="sc-detail-item"><div class="sdi-label">Coverage</div><div class="sdi-val">Full crop value</div></div>
+            <div class="sc-detail-item"><div class="sdi-label">Claim time</div><div class="sdi-val">Within 2 months</div></div>
+          </div>
+          <div class="sc-footer">
+            <span class="sc-deadline">📅 Deadline: Before sowing season</span>
+            <div style="display:flex;gap:8px">
+              <button class="learn-btn">Learn More</button>
+              <button class="apply-btn">Apply Now →</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="scheme-card eligible anim-fade-up anim-delay-3" data-cat="central">
+          <div class="sc-header">
+            <div class="sc-icon" style="background:#eff6ff">🧪</div>
+            <div><div class="sc-name">Soil Health Card Scheme</div><div class="sc-ministry">Ministry of Agriculture · Central Govt</div></div>
+            <div class="sc-badges">
+              <span class="badge badge-green">Eligible ✓</span>
+              <span class="badge badge-blue">Free Service</span>
+            </div>
+          </div>
+          <div class="sc-body">Free soil testing for 12 parameters including NPK, pH, micronutrients. Farmers receive a Soil Health Card with crop-wise fertilizer recommendations to reduce input costs.</div>
+          <div class="sc-details">
+            <div class="sc-detail-item"><div class="sdi-label">Cost</div><div class="sdi-val">Completely Free</div></div>
+            <div class="sc-detail-item"><div class="sdi-label">Parameters</div><div class="sdi-val">12 nutrients</div></div>
+            <div class="sc-detail-item"><div class="sdi-label">Frequency</div><div class="sdi-val">Every 2 years</div></div>
+          </div>
+          <div class="sc-footer">
+            <span class="sc-deadline">📅 Apply anytime · Ongoing</span>
+            <div style="display:flex;gap:8px">
+              <button class="learn-btn">Learn More</button>
+              <button class="apply-btn">Apply Now →</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="scheme-card anim-fade-up anim-delay-1" data-cat="central subsidy">
+          <div class="sc-header">
+            <div class="sc-icon" style="background:#f5f3ff">⚡</div>
+            <div><div class="sc-name">PM KUSUM Scheme</div><div class="sc-ministry">Ministry of New & Renewable Energy</div></div>
+            <div class="sc-badges">
+              <span class="badge badge-blue">Solar Pump</span>
+              <span class="badge badge-amber">90% Subsidy</span>
+            </div>
+          </div>
+          <div class="sc-body">Solar-powered irrigation pumps with up to 90% government subsidy (60% central + 30% state). Reduces diesel cost and gives free electricity for pumping water.</div>
+          <div class="sc-details">
+            <div class="sc-detail-item"><div class="sdi-label">Subsidy</div><div class="sdi-val">Up to 90%</div></div>
+            <div class="sc-detail-item"><div class="sdi-label">Pump capacity</div><div class="sdi-val">3–7.5 HP</div></div>
+            <div class="sc-detail-item"><div class="sdi-label">Farmer share</div><div class="sdi-val">10% only</div></div>
+          </div>
+          <div class="sc-footer">
+            <span class="sc-deadline">📅 Rolling applications · Rajasthan open</span>
+            <div style="display:flex;gap:8px">
+              <button class="learn-btn">Learn More</button>
+              <button class="apply-btn">Apply Now →</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="scheme-card anim-fade-up anim-delay-2" data-cat="central subsidy">
+          <div class="sc-header">
+            <div class="sc-icon" style="background:#fef2f2">🚜</div>
+            <div><div class="sc-name">Agricultural Mechanization Sub-Mission</div><div class="sc-ministry">Ministry of Agriculture · SMAM</div></div>
+            <div class="sc-badges">
+              <span class="badge badge-amber">50% Subsidy</span>
+              <span class="badge badge-blue">Equipment</span>
+            </div>
+          </div>
+          <div class="sc-body">Subsidies up to 50% for purchase of modern agricultural equipment including tractors, harvesters, sprayers, and other machinery to reduce manual labor costs.</div>
+          <div class="sc-details">
+            <div class="sc-detail-item"><div class="sdi-label">Max subsidy</div><div class="sdi-val">50%</div></div>
+            <div class="sc-detail-item"><div class="sdi-label">Equipment</div><div class="sdi-val">100+ items</div></div>
+            <div class="sc-detail-item"><div class="sdi-label">Priority</div><div class="sdi-val">Small farmers</div></div>
+          </div>
+          <div class="sc-footer">
+            <span class="sc-deadline">📅 Apply before 31 March 2026</span>
+            <div style="display:flex;gap:8px">
+              <button class="learn-btn">Learn More</button>
+              <button class="apply-btn">Apply Now →</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-bottom" style="border-top:none;padding-top:0">
+      <div class="footer-copy">© 2026 कृषि AI🌾 · Alpha Coders — GEC Ajmer</div>
+      <div class="footer-team">Built with ❤️ for Indian Farmers 🌱</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+function setTab(el, cat) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  const cards = document.querySelectorAll('.scheme-card');
+  let visible = 0;
+  cards.forEach(card => {
+    const cardCat = card.dataset.cat || '';
+    if (cat === 'all' || cardCat.includes(cat)) {
+      card.style.display = '';
+      visible++;
+    } else {
+      card.style.display = 'none';
+    }
+  });
+}
+function checkEligibility() {
+  const r = document.getElementById('elig-result');
+  r.style.display = 'block';
+  const land = document.getElementById('land').value;
+  const count = land < 2 ? 8 : land < 5 ? 6 : 5;
+  document.getElementById('er-count').textContent = count + ' schemes';
+  document.querySelectorAll('.scheme-card').forEach((c, i) => {
+    if (i < 3) c.classList.add('eligible');
+  });
+}
+</script>
+
+<section style="padding:60px 5%;max-width:900px;margin:0 auto">
+  <div style="text-align:center;margin-bottom:32px">
+    <div class="section-tag" style="margin:0 auto 12px">❓ FAQs</div>
+    <div class="section-title text-center">Scheme <span>FAQs</span></div>
+  </div>
+
+  <div class="ac ac-open" data-group="faq">
+    <div class="ac-header">
+      <div class="ac-title"><div class="ac-icon-wrap">💰</div>PM Kisan — How to apply?</div>
+      <div class="ac-arrow">▼</div>
+    </div>
+    <div class="ac-body">
+      <div class="ac-body-inner" style="font-size:13px;color:var(--text2);line-height:1.8">
+        <strong>Step 1:</strong> Visit pmkisan.gov.in or your nearest Common Service Centre (CSC).<br>
+        <strong>Step 2:</strong> Submit Aadhaar card, land ownership records (Khatauni), and bank passbook.<br>
+        <strong>Step 3:</strong> After verification, ₹2,000 is deposited in 3 installments every 4 months.<br><br>
+        <em>Helpline:</em> 155261 / 1800115526 (Toll Free)
+      </div>
+    </div>
+  </div>
+
+  <div class="ac" data-group="faq">
+    <div class="ac-header">
+      <div class="ac-title"><div class="ac-icon-wrap">🧪</div>Soil Health Card — When do I get results?</div>
+      <div class="ac-arrow">▼</div>
+    </div>
+    <div class="ac-body">
+      <div class="ac-body-inner" style="font-size:13px;color:var(--text2);line-height:1.8">
+        After submitting your soil sample at the local agriculture office, results are typically ready within <strong>15–30 days</strong>. The card lists NPK levels, pH, and specific fertilizer recommendations for your soil. Cards are issued once every <strong>2 years</strong>.
+      </div>
+    </div>
+  </div>
+
+  <div class="ac" data-group="faq">
+    <div class="ac-header">
+      <div class="ac-title"><div class="ac-icon-wrap">🌾</div>Fasal Bima — What crops are covered?</div>
+      <div class="ac-arrow">▼</div>
+    </div>
+    <div class="ac-body">
+      <div class="ac-body-inner" style="font-size:13px;color:var(--text2);line-height:1.8">
+        Under PMFBY, the following crops are covered in Rajasthan: <strong>Wheat, Bajra, Maize, Mustard, Groundnut, Soybean, Onion, Tomato, Chilli</strong>, and more. Premium rates are 2% for Kharif crops, 1.5% for Rabi. The remaining premium is borne by State and Central governments.
+      </div>
+    </div>
+  </div>
+
+  <div class="ac" data-group="faq">
+    <div class="ac-header">
+      <div class="ac-title"><div class="ac-icon-wrap">🏦</div>Kisan Credit Card — Eligibility?</div>
+      <div class="ac-arrow">▼</div>
+    </div>
+    <div class="ac-body">
+      <div class="ac-body-inner" style="font-size:13px;color:var(--text2);line-height:1.8">
+        Any farmer who owns or leases agricultural land is eligible. Apply at your nearest nationalized bank or cooperative bank. Required documents: land records, Aadhaar, passport photo. Credit limit is based on crop cultivation cost + maintenance expenses. Interest rate: <strong>4% per annum</strong> (with government subsidy).
+      </div>
+    </div>
+  </div>
+</section>
+
+<script src="anim.js"></script>
+</body>
+</html>

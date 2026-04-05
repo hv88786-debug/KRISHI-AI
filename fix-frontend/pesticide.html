@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Verify Pesticide — कृषि AI🌾</title>
+<link rel="stylesheet" href="style.css">
+<style>
+body{padding-top:64px}
+.content{max-width:1200px;margin:0 auto;padding:32px 5%}
+
+/* VERIFY SECTION */
+.verify-layout{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start;margin-bottom:32px}
+.verify-card{background:#fff;border:1px solid var(--border);border-radius:20px;padding:28px}
+.vc-title{font-size:16px;font-weight:700;color:var(--text);margin-bottom:4px}
+.vc-sub{font-size:13px;color:var(--text3);margin-bottom:20px}
+
+/* METHOD TABS */
+.method-tabs{display:flex;gap:8px;margin-bottom:18px}
+.mtab{flex:1;padding:9px 10px;border:1.5px solid var(--border);border-radius:10px;background:#fff;font-size:12px;font-weight:600;color:var(--text2);cursor:pointer;text-align:center;transition:all 0.15s;font-family:'Outfit',sans-serif}
+.mtab:hover{border-color:var(--g300);color:var(--g700)}
+.mtab.active{background:var(--g600);color:#fff;border-color:var(--g600)}
+
+/* INPUT */
+.verify-input-wrap{position:relative;margin-bottom:14px}
+.verify-input{width:100%;padding:12px 48px 12px 16px;border:2px solid var(--border);border-radius:12px;font-size:14px;font-family:'Outfit',sans-serif;outline:none;transition:border-color 0.15s}
+.verify-input:focus{border-color:var(--g500)}
+.verify-btn{width:100%;padding:12px;background:var(--g600);color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;transition:all 0.15s}
+.verify-btn:hover{background:var(--g700)}
+.verify-btn:disabled{background:#e2e8f0;color:#94a3b8;cursor:not-allowed}
+
+/* RESULT BOX */
+.result-box{display:none;margin-top:16px;border-radius:14px;overflow:hidden;border:2px solid}
+.result-box.genuine{border-color:#22c55e}
+.result-box.fake{border-color:#ef4444}
+.result-box.notfound{border-color:#f59e0b}
+.result-header{padding:14px 18px;display:flex;align-items:center;gap:12px}
+.rh-genuine{background:#f0fdf4}
+.rh-fake{background:#fef2f2}
+.rh-notfound{background:#fef3c7}
+.result-icon{font-size:28px;flex-shrink:0}
+.result-status{font-size:16px;font-weight:800}
+.rs-genuine{color:#15803d}
+.rs-fake{color:#991b1b}
+.rs-notfound{color:#92400e}
+.result-msg{font-size:12px;margin-top:2px}
+.result-body{padding:14px 18px;background:#fff}
+.rb-row{display:flex;gap:8px;margin-bottom:8px;font-size:13px}
+.rb-label{font-weight:600;color:var(--text2);min-width:120px;flex-shrink:0}
+.rb-val{color:var(--text)}
+.tips-list{margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
+.tips-title{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:8px}
+.tip-item{display:flex;gap:8px;font-size:12px;color:var(--text2);margin-bottom:6px}
+
+/* SEARCH SECTION */
+.search-section{margin-bottom:24px}
+.search-bar{display:flex;gap:10px;margin-bottom:20px}
+.search-input{flex:1;padding:10px 16px;border:1.5px solid var(--border);border-radius:10px;font-size:14px;font-family:'Outfit',sans-serif;outline:none}
+.search-input:focus{border-color:var(--g500)}
+.search-btn{padding:10px 20px;background:var(--g600);color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;white-space:nowrap}
+.crop-filter{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.cf-btn{padding:5px 14px;border-radius:20px;border:1.5px solid var(--border);background:#fff;font-size:12px;font-weight:600;color:var(--text2);cursor:pointer;transition:all 0.15s;font-family:'Outfit',sans-serif}
+.cf-btn:hover{border-color:var(--g300);color:var(--g700)}
+.cf-btn.active{background:var(--g600);color:#fff;border-color:var(--g600)}
+
+/* PESTICIDE TABLE */
+.pest-table{width:100%;border-collapse:collapse;background:#fff;border-radius:14px;overflow:hidden;border:1px solid var(--border)}
+.pest-table th{padding:11px 16px;text-align:left;font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;background:#f8faf6;border-bottom:1px solid var(--border)}
+.pest-table td{padding:12px 16px;font-size:13px;color:var(--text);border-bottom:1px solid var(--border2)}
+.pest-table tr:last-child td{border-bottom:none}
+.pest-table tr:hover td{background:#f8faf6}
+.safety-badge{display:inline-flex;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600}
+.sb-moderate{background:#fef3c7;color:#92400e}
+.sb-high{background:#fef2f2;color:#991b1b}
+.sb-low{background:#f0fdf4;color:#15803d}
+.crop-tags{display:flex;gap:4px;flex-wrap:wrap}
+.crop-tag{background:#f0fdf4;color:#15803d;font-size:10px;font-weight:600;padding:2px 6px;border-radius:8px}
+.verify-quick-btn{padding:4px 10px;border:1px solid var(--g300);background:#f0fdf4;color:var(--g700);border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;transition:all 0.15s}
+.verify-quick-btn:hover{background:var(--g100)}
+
+/* LOADING */
+.loading{text-align:center;padding:40px;color:var(--text3);font-size:14px}
+</style>
+</head>
+<body>
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 2C7 2 4 5.5 4 9.5c0 3 1.5 5.5 3.8 6.8L10 18l2.2-1.7C14.5 15 16 12.5 16 9.5 16 5.5 13 2 10 2z" fill="rgba(255,255,255,0.95)"/><path d="M10 7v5M8 9l2-2 2 2" stroke="rgba(21,128,61,0.9)" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+      <div class="nav-logo-text">कृषि<span>AI</span>🌾</div>
+    </a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="disease.html">Disease AI</a>
+      <a href="market.html">Market</a>
+      <a href="schemes.html">Schemes</a>
+      <a href="about.html">About</a>
+    </div>
+    <a href="dashboard.html" class="btn btn-green" style="font-size:13px;padding:8px 18px;">Dashboard →</a>
+  </div>
+</nav>
+
+<div class="page-hero">
+  <div class="page-hero-inner">
+    <div class="section-tag" style="background:rgba(74,222,128,0.15);border-color:rgba(74,222,128,0.3);color:#86efac;margin-bottom:14px">CIB&RC India Database · Real-time Check</div>
+    <h1>✅ Pesticide Verification</h1>
+    <p>Fake pesticides cost farmers crores every year. Verify any pesticide by name, barcode or registration number instantly — protect your crop and your money.</p>
+  </div>
+</div>
+
+<div class="content">
+  <!-- VERIFY + STATS -->
+  <div class="verify-layout">
+    <!-- LEFT: VERIFY TOOL -->
+    <div class="verify-card">
+      <div class="vc-title">🔍 Verify a Pesticide</div>
+      <div class="vc-sub">Enter product name, scan barcode, or enter registration number</div>
+
+      <!-- Method tabs -->
+      <div class="method-tabs">
+        <button class="mtab active" onclick="setMethod(this,'name')">📝 By Name</button>
+        <button class="mtab" onclick="setMethod(this,'barcode')">📦 By Barcode</button>
+        <button class="mtab" onclick="setMethod(this,'registration')">📋 By Reg. No.</button>
+      </div>
+
+      <div class="verify-input-wrap">
+        <input class="verify-input" id="verify-input" placeholder="e.g. Mancozeb 75% WP" type="text"
+          onkeydown="if(event.key==='Enter') verifyNow()">
+      </div>
+      <div id="method-hint" style="font-size:11px;color:var(--text3);margin-bottom:12px">
+        💡 Type product name exactly as written on the packet
+      </div>
+      <button class="verify-btn" id="verify-btn" onclick="verifyNow()">🔍 Verify Now</button>
+
+      <!-- Result -->
+      <div class="result-box" id="result-box">
+        <div class="result-header" id="result-header">
+          <div class="result-icon" id="result-icon">✅</div>
+          <div>
+            <div class="result-status" id="result-status">Genuine</div>
+            <div class="result-msg" id="result-msg">Registered with CIB&RC</div>
+          </div>
+        </div>
+        <div class="result-body" id="result-body"></div>
+      </div>
+    </div>
+
+    <!-- RIGHT: HOW TO SPOT FAKES -->
+    <div class="verify-card">
+      <div class="vc-title">⚠️ Nakli Keetnashak Kaise Pahchane?</div>
+      <div class="vc-sub" style="margin-bottom:16px">Ye signs dikhein toh BEWARE:</div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;gap:10px;padding:10px 12px;background:#fef2f2;border-radius:10px;font-size:13px">
+          <span style="font-size:18px;flex-shrink:0">🏷️</span>
+          <div><strong style="color:#991b1b">No Registration Number</strong><br><span style="color:var(--text2)">Har asli product pe CIR number hona chahiye</span></div>
+        </div>
+        <div style="display:flex;gap:10px;padding:10px 12px;background:#fef3c7;border-radius:10px;font-size:13px">
+          <span style="font-size:18px;flex-shrink:0">💰</span>
+          <div><strong style="color:#92400e">Bahut Sasta Price</strong><br><span style="color:var(--text2)">Market rate se 30%+ kam = suspect karo</span></div>
+        </div>
+        <div style="display:flex;gap:10px;padding:10px 12px;background:#fef2f2;border-radius:10px;font-size:13px">
+          <span style="font-size:18px;flex-shrink:0">📦</span>
+          <div><strong style="color:#991b1b">Poor Packaging</strong><br><span style="color:var(--text2)">Blurry print, spelling mistakes, torn label</span></div>
+        </div>
+        <div style="display:flex;gap:10px;padding:10px 12px;background:#fef3c7;border-radius:10px;font-size:13px">
+          <span style="font-size:18px;flex-shrink:0">🏪</span>
+          <div><strong style="color:#92400e">Unlicensed Seller</strong><br><span style="color:var(--text2)">Only licensed agri shops se kharido</span></div>
+        </div>
+        <div style="display:flex;gap:10px;padding:10px 12px;background:#eff6ff;border-radius:10px;font-size:13px">
+          <span style="font-size:18px;flex-shrink:0">📞</span>
+          <div><strong style="color:#1d4ed8">Report Fake Pesticide</strong><br><span style="color:var(--text2)">Helpline: 1800-180-1551 (Kisan Call Center)</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- APPROVED PESTICIDES DATABASE -->
+  <div class="search-section">
+    <div style="font-size:18px;font-weight:700;color:var(--text);margin-bottom:14px">📋 Approved Pesticides Database</div>
+
+    <div class="search-bar">
+      <input class="search-input" id="search-input" placeholder="Search by name, ingredient, brand..." type="text"
+        oninput="searchPesticides(this.value)">
+      <button class="search-btn" onclick="searchPesticides(document.getElementById('search-input').value)">Search</button>
+    </div>
+
+    <div class="crop-filter">
+      <button class="cf-btn active" onclick="filterByCrop(this,'')">All Crops</button>
+      <button class="cf-btn" onclick="filterByCrop(this,'Wheat')">🌾 Wheat</button>
+      <button class="cf-btn" onclick="filterByCrop(this,'Maize')">🌽 Maize</button>
+      <button class="cf-btn" onclick="filterByCrop(this,'Onion')">🧅 Onion</button>
+      <button class="cf-btn" onclick="filterByCrop(this,'Tomato')">🍅 Tomato</button>
+    </div>
+
+    <div id="pest-table-wrap">
+      <div class="loading">Loading pesticide database...</div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-bottom" style="border-top:none;padding-top:0">
+      <div class="footer-copy">© 2026 कृषि AI🌾 · Alpha Coders — GEC Ajmer</div>
+      <div class="footer-team">Built with ❤️ for Indian Farmers 🌱</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ─── AUTO-DETECT BACKEND URL ───────────────────────
+// Kaam karta hai: Live Server, file://, aur kisi bhi IP pe
+const BACKEND_IP   = window.location.hostname === 'localhost' || 
+                     window.location.hostname === '127.0.0.1' || 
+                     window.location.hostname === ''
+                     ? '10.109.254.121'   // ← Apna PC IP yahan (ipconfig se dekho)
+                     : window.location.hostname;
+const BACKEND_PORT = '5000';
+const API_BASE     = `http://${BACKEND_IP}:${BACKEND_PORT}/api`;
+
+let verifyMethod = 'name';
+let allPesticides = [];
+
+// ── Method tabs ────────────────────────────────
+const hints = {
+  name: '💡 Type product name exactly as written on the packet',
+  barcode: '💡 Type the barcode number printed on the bottom of the packet',
+  registration: '💡 Type the CIR registration number (e.g. CIR-3456/2019)',
+};
+const placeholders = {
+  name: 'e.g. Mancozeb 75% WP',
+  barcode: 'e.g. 8901432000123',
+  registration: 'e.g. CIR-3456/2019',
+};
+
+function setMethod(el, method) {
+  document.querySelectorAll('.mtab').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  verifyMethod = method;
+  document.getElementById('verify-input').placeholder = placeholders[method];
+  document.getElementById('method-hint').textContent  = hints[method];
+  document.getElementById('result-box').style.display = 'none';
+  document.getElementById('verify-input').value = '';
+  document.getElementById('verify-input').focus();
+}
+
+// ── Verify ─────────────────────────────────────
+async function verifyNow() {
+  const query = document.getElementById('verify-input').value.trim();
+  if (!query) { document.getElementById('verify-input').focus(); return; }
+
+  const btn = document.getElementById('verify-btn');
+  btn.textContent = '🔄 Checking...'; btn.disabled = true;
+
+  try {
+    const res  = await fetch(`${API_BASE}/pesticide/verify`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query, type: verifyMethod })
+    });
+    const json = await res.json();
+    if (!json.success) throw new Error('API error');
+    showResult(json);
+  } catch(err) {
+    alert('Verification failed — backend connected hai? ' + err.message);
+  } finally {
+    btn.textContent = '🔍 Verify Now'; btn.disabled = false;
+  }
+}
+
+function showResult(json) {
+  const box    = document.getElementById('result-box');
+  const header = document.getElementById('result-header');
+  const icon   = document.getElementById('result-icon');
+  const status = document.getElementById('result-status');
+  const msg    = document.getElementById('result-msg');
+  const body   = document.getElementById('result-body');
+
+  let statusKey = json.verified ? 'genuine' : (json.status === 'NOT_FOUND' ? 'notfound' : 'fake');
+
+  box.className    = 'result-box ' + statusKey;
+  box.style.display = 'block';
+  header.className = 'result-header rh-' + statusKey;
+  icon.textContent = statusKey === 'genuine' ? '✅' : statusKey === 'notfound' ? '⚠️' : '🚫';
+  status.className = 'result-status rs-' + statusKey;
+  status.textContent = statusKey === 'genuine' ? 'GENUINE ✓' : statusKey === 'notfound' ? 'NOT FOUND' : 'FAKE / UNREGISTERED';
+  msg.textContent  = json.message;
+
+  if (json.product) {
+    const p = json.product;
+    body.innerHTML = `
+      <div class="rb-row"><span class="rb-label">Brand Name</span><span class="rb-val">${p.brand}</span></div>
+      <div class="rb-row"><span class="rb-label">Manufacturer</span><span class="rb-val">${p.manufacturer}</span></div>
+      <div class="rb-row"><span class="rb-label">Active Ingredient</span><span class="rb-val">${p.activeIngredient}</span></div>
+      <div class="rb-row"><span class="rb-label">Reg. Number</span><span class="rb-val" style="font-family:monospace">${p.registrationNo}</span></div>
+      <div class="rb-row"><span class="rb-label">Market Price</span><span class="rb-val">${p.price}</span></div>
+      <div class="rb-row"><span class="rb-label">Waiting Period</span><span class="rb-val">${p.waitingPeriod} before harvest</span></div>
+      <div class="rb-row"><span class="rb-label">Safety Level</span><span class="rb-val"><span class="safety-badge sb-${p.safetyLevel.toLowerCase()}">${p.safetyLevel}</span></span></div>
+      <div class="rb-row"><span class="rb-label">For Crops</span><span class="rb-val">${p.forCrops.join(', ')}</span></div>
+      ${json.safetyTips ? `<div class="tips-list">
+        <div class="tips-title">Safety Instructions</div>
+        ${json.safetyTips.map(t => `<div class="tip-item"><span>•</span><span>${t}</span></div>`).join('')}
+      </div>` : ''}
+    `;
+  } else {
+    body.innerHTML = `<div style="font-size:13px;color:var(--text2)">${json.warning || ''}</div>`;
+  }
+}
+
+// ── Quick verify from table ────────────────────
+function quickVerify(name) {
+  document.getElementById('verify-input').value = name;
+  setMethod(document.querySelector('.mtab'), 'name');
+  document.querySelector('.mtab').classList.add('active');
+  verifyMethod = 'name';
+  verifyNow();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ── Load all pesticides ────────────────────────
+async function loadPesticides(crop = '') {
+  let url = `${API_BASE}/pesticide`;
+  if (crop) url += `?crop=${encodeURIComponent(crop)}`;
+  try {
+    const res  = await fetch(url);
+    const json = await res.json();
+    if (!json.success) throw new Error();
+    allPesticides = json.pesticides;
+    renderTable(allPesticides);
+  } catch {
+    document.getElementById('pest-table-wrap').innerHTML =
+      '<div class="loading">Backend se connect nahi ho pa raha — npm start karo</div>';
+  }
+}
+
+async function searchPesticides(q) {
+  if (!q.trim()) { renderTable(allPesticides); return; }
+  try {
+    const res  = await fetch(`${API_BASE}/pesticide/search?q=${encodeURIComponent(q)}`);
+    const json = await res.json();
+    if (json.success) renderTable(json.pesticides);
+  } catch {}
+}
+
+function filterByCrop(el, crop) {
+  document.querySelectorAll('.cf-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  loadPesticides(crop);
+}
+
+function renderTable(list) {
+  if (!list.length) {
+    document.getElementById('pest-table-wrap').innerHTML =
+      '<div class="loading">Koi pesticide nahi mila — search change karo</div>';
+    return;
+  }
+  document.getElementById('pest-table-wrap').innerHTML = `
+    <table class="pest-table">
+      <thead><tr>
+        <th>Product Name</th>
+        <th>Active Ingredient</th>
+        <th>For Crops</th>
+        <th>Safety</th>
+        <th>Price Range</th>
+        <th>Waiting Period</th>
+        <th>Action</th>
+      </tr></thead>
+      <tbody>
+        ${list.map(p => `<tr>
+          <td>
+            <div style="font-weight:600">${p.name}</div>
+            <div style="font-size:11px;color:var(--text3)">${p.brand}</div>
+          </td>
+          <td style="font-size:12px">${p.activeIngredient}</td>
+          <td><div class="crop-tags">${p.forCrops.slice(0,3).map(c=>`<span class="crop-tag">${c}</span>`).join('')}</div></td>
+          <td><span class="safety-badge sb-${p.safetyLevel.toLowerCase()}">${p.safetyLevel}</span></td>
+          <td style="font-size:12px;font-weight:600;color:var(--g700)">${p.price}</td>
+          <td style="font-size:12px">${p.waitingPeriod}</td>
+          <td><button class="verify-quick-btn" onclick="quickVerify('${p.name}')">Verify ↑</button></td>
+        </tr>`).join('')}
+      </tbody>
+    </table>`;
+}
+
+document.addEventListener('DOMContentLoaded', () => loadPesticides());
+</script>
+<script src="anim.js"></script>
+</body>
+</html>

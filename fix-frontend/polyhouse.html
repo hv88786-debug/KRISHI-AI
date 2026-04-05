@@ -1,0 +1,260 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Polyhouse Conditions — कृषि AI🌾</title>
+  <style>
+    :root { --bg: #f8faf6; --surface: #ffffff; --border: #e2e8f0; --text: #0f172a; --muted: #64748b; --primary: #16a34a; --accent: #22c55e; --danger: #dc2626; }
+    [data-theme='dark'] { --bg: #0b1c24; --surface: #0f172a; --border: #334155; --text: #e2e8f0; --muted: #94a3b8; --primary: #0891b2; --accent: #0ea5e9; }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: "Inter", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); color: var(--text); transition: background .3s ease, color .3s ease; padding-top: 80px; }
+
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 999; background: #fff; border-bottom: 1px solid #e2e8f0; box-shadow: 0 5px 16px rgba(15, 23, 42, 0.12); }
+    .nav-inner { max-width: 1280px; margin: 0 auto; padding: 14px 5%; display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+    .nav-logo { font-size: 1.05rem; font-weight: 800; color: #0f5132; text-decoration: none; }
+    .nav-logo span { color: #16a34a; }
+    .nav-links { display: flex; flex-wrap: wrap; gap: 10px; }
+    .nav-links a { color: #475569; text-decoration: none; font-weight: 600; font-size: 14px; padding: 7px 11px; border-radius: 8px; transition: background .2s, color .2s; }
+    .nav-links a:hover, .nav-links a.active { background: #d1fae5; color: #0f5132; }
+    .btn-green { background: #16a34a; color: #fff; border: 0; border-radius: 10px; font-weight: 700; padding: 8px 16px; cursor: pointer; text-decoration: none; }
+
+    .page-hero { max-width: 1280px; margin: 0 auto 24px; background:#fff; border:1px solid #e2e8f0; border-radius:18px; box-shadow:0 10px 24px rgba(15,23,42,0.08); padding:20px 22px; }
+    .page-hero h1 { margin:0 0 8px; font-size:1.9rem; color:#0f5132; }
+    .page-hero p { margin:0; color:#475569; }
+
+    .layout { max-width: 1280px; margin: 0 auto; padding: 0 5% 24px; }
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; box-shadow: 0 16px 32px rgba(0,0,0,0.08); padding: 20px; margin-bottom: 16px; }
+
+    .row { display: flex; flex-wrap: wrap; align-items:center; gap:10px; margin-bottom: 10px; }
+    .row input, .row select, .row button { border: 1px solid var(--border); border-radius: 10px; padding: 8px 11px; font-size: 0.95rem; background: var(--surface); color: var(--text); }
+    .row input::placeholder, .row select::placeholder { color: var(--muted); }
+    .row input { width: 100%; max-width: 250px; }
+    .row button { background: var(--primary); color:#fff; border:0; min-width:120px; font-weight:700; cursor:pointer; }
+
+    .tile-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:12px; margin-top: 10px; }
+    .tile { border-radius:14px; background: linear-gradient(130deg, #effff5, #ddfdef); border:1px solid #a7f3d0; padding:14px; box-shadow:0 10px 24px rgba(16,185,129,0.12); transition: border-color .2s ease, box-shadow .2s ease, background .2s ease; }
+    .tile strong { font-size:1.5rem; color:#065f46; }
+    .tile.status-ok { border-color: #22c55e; box-shadow:0 12px 28px rgba(34,197,94,0.22); }
+    .tile.status-warn { border-color: #f59e0b; box-shadow:0 12px 28px rgba(245,158,11,0.32), inset 0 0 0 1px rgba(245,158,11,0.35); }
+    .tile.status-danger { border-color: #dc2626; box-shadow:0 12px 28px rgba(220,38,38,0.45), inset 0 0 0 2px rgba(128,0,0,0.35); background: linear-gradient(130deg, #fff0f0, #fee2e2); }
+
+    .tile h4 { margin:0 0 8px; font-size:0.8rem; color:#065f46; text-transform:uppercase; letter-spacing:.06em; }
+
+    table { width:100%; border-collapse:collapse; border-radius:10px; overflow:hidden; margin-top:12px; }
+    th, td { border:1px solid #e2e8f0; padding:10px 9px; font-size:.91rem; text-align:center; }
+    th { background:#bbf7d0; color:#0f5132; font-weight:700; }
+    tbody tr:hover { background:#ecfdf5; }
+
+    .detail { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:14px; margin-top:12px; }
+    .detail-card { background:#effdf8; border:1px solid #a7f3d0; border-radius:12px; padding:11px; }
+
+    .badge { display:inline-flex; align-items:center; border-radius:999px; color:#fff; padding:4px 11px; font-size:.75rem; font-weight:700; }
+    .badge-ok { background:linear-gradient(90deg,#22c55e,#0f766e); }
+
+    @media (max-width: 900px){ .nav-inner{justify-content:center;} .page-hero{padding:16px;} }
+    @media (max-width: 760px){ .row{flex-direction:column;align-items:stretch;} table, th, td{font-size:.82rem;} .page-hero h1{font-size:1.5rem;} }
+  </style>
+</head>
+<body data-theme="light">
+  <nav>
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">कृषि AI<span>🌾</span></a>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="polyhouse.html" class="active">Polyhouse</a>
+        <a href="market.html">Market</a>
+        <a href="about.html">About</a>
+      </div>
+      <a href="dashboard.html" class="btn-green">Open Dashboard →</a>
+    </div>
+  </nav>
+
+  <div class="page-hero">
+    <h1>Polyhouse Conditions — कृषि AI🌾</h1>
+    <p>Market-themed UI with live sensor widgets, climate status, and crop conditioning controls.</p>
+  </div>
+
+  <div class="layout">
+    <div class="card">
+      <div class="row">
+        <input id="cropSearch" type="search" placeholder="Search crop name" />
+        <button id="resetBtn">Reset</button>
+        <select id="cropSelect"><option value="">--Select crop for detail--</option></select>
+        <button id="weatherBtn">Load local weather</button>
+      </div>
+
+      <div class="tile-grid" id="liveTiles">
+        <div class="tile"><h4>Current Temp</h4><strong id="liveTemp">-- °C</strong></div>
+        <div class="tile"><h4>Humidity</h4><strong id="liveHum">-- %</strong></div>
+        <div class="tile"><h4>Light</h4><strong id="liveLight">-- lux</strong></div>
+        <div class="tile"><h4>Soil Moisture</h4><strong id="liveSoil">-- %</strong></div>
+      </div>
+
+      <table>
+        <thead>
+          <tr><th>Crop</th><th>Temp (°C)</th><th>Humidity (%)</th><th>Light (lux)</th><th>Soil Moisture (%)</th><th>Notes</th></tr>
+        </thead>
+        <tbody id="cropsTbody"></tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h2 style="margin:0 0 10px;">Add custom crop</h2>
+      <div class="detail">
+        <div class="detail-card">Crop<input id="newCrop" placeholder="Tomato" /></div>
+        <div class="detail-card">Temp<input id="newTemp" placeholder="18-28" /></div>
+        <div class="detail-card">Humidity<input id="newHum" placeholder="65-90" /></div>
+        <div class="detail-card">Light<input id="newLight" placeholder="18000-30000" /></div>
+        <div class="detail-card">Soil Moisture<input id="newSoil" placeholder="65-80" /></div>
+        <div class="detail-card">Notes<input id="newNotes" placeholder="CO2 1000 ppm" /></div>
+      </div>
+      <div style="margin-top:12px;"><button id="addCropBtn">Add Crop</button> <span id="feedback" style="color:#64748b;font-size:.86rem;"></span></div>
+    </div>
+
+    <div class="card">
+      <h2 style="margin:0 0 10px;">Polyhouse Control Parameters</h2>
+      <div class="detail-card"><b>Temperature:</b> PID regulation with 2°C deadband. Keep day/night control with minimal fluctuation. Aim for 90% uptime in target range.</div>
+      <div class="detail-card"><b>Humidity:</b> Mist and exhaust control for 55-95%. Use crop-specific setpoints. Prevent foliar disease in tomatoes.</div>
+      <div class="detail-card"><b>Soil Moisture:</b> Capacitive sensors + drip system; avoid root saturation. Keep 50-80% depending on crop.</div>
+      <div class="detail-card"><b>Light:</b> Natural + LEDs 300+ µmol/m²/s; shade net when > high. Track DLI 12-25 for active growth.</div>
+    </div>
+  </div>
+
+  <script>
+    const crops = [
+      { crop:'Tomato', temp:'18-28', hum:'65-90', light:'18000-30000', soil:'65-80', notes:'CO2 800-1200 ppm, active airflow' },
+      { crop:'Cucumber', temp:'20-26', hum:'75-95', light:'15000-25000', soil:'70-80', notes:'High humidity, leaf disease monitoring' },
+      { crop:'Capsicum', temp:'22-28', hum:'70-90', light:'17000-28000', soil:'65-78', notes:'Warm nights and stable moisture' },
+      { crop:'Strawberry', temp:'16-22', hum:'70-85', light:'14000-22000', soil:'60-75', notes:'Cool conditions improve quality' },
+      { crop:'Lettuce', temp:'10-18', hum:'80-95', light:'10000-15000', soil:'65-75', notes:'Summer shade to prevent bolting' },
+      { crop:'Apple', temp:'15-25', hum:'70-90', light:'18000-26000', soil:'65-75', notes:'Bloom humidity control + airflow' }
+    ];
+
+    const tb = document.getElementById('cropsTbody');
+    const select = document.getElementById('cropSelect');
+    const search = document.getElementById('cropSearch');
+    const reset = document.getElementById('resetBtn');
+    const weatherBtn = document.getElementById('weatherBtn');
+    const feedback = document.getElementById('feedback');
+    const themeBtn = document.getElementById('themeToggle');
+    const body = document.body;
+
+    const liveTemp = document.getElementById('liveTemp');
+    const liveHum = document.getElementById('liveHum');
+    const liveLight = document.getElementById('liveLight');
+    const liveSoil = document.getElementById('liveSoil');
+
+    function render(list) {
+      tb.innerHTML = list.map(c => `
+        <tr>
+          <td>${c.crop}</td>
+          <td>${c.temp}</td>
+          <td>${c.hum}</td>
+          <td>${c.light}</td>
+          <td>${c.soil}</td>
+          <td>${c.notes}</td>
+        </tr>
+      `).join('');
+      select.innerHTML = '<option value="">--Select crop for detail--</option>' + list.map(c => `<option value="${c.crop}">${c.crop}</option>`).join('');
+    }
+
+    function setLive(temp, hum, light, soil) {
+      liveTemp.textContent = `${temp} °C`;
+      liveHum.textContent = `${hum} %`;
+      liveLight.textContent = `${light} lux`;
+      liveSoil.textContent = `${soil} %`;
+    }
+
+    function statusFor(value, range) {
+      const [min,max] = range.split('-').map(v => parseFloat(v.replace(/,/g, '')) || 0);
+      if (value >= min && value <= max) return 'OK';
+      if (value >= min - 2 && value <= max + 2) return 'WARN';
+      return 'DANGER';
+    }
+
+    function highlightLive(selected) {
+      if (!selected) return;
+      const t = statusFor(parseFloat(liveTemp.textContent), selected.temp);
+      const h = statusFor(parseFloat(liveHum.textContent), selected.hum);
+      const l = statusFor(parseFloat(liveLight.textContent), selected.light);
+      const s = statusFor(parseFloat(liveSoil.textContent), selected.soil);
+
+      const tiles = [liveTemp, liveHum, liveLight, liveSoil].map(el => el.parentElement);
+      tiles.forEach(tile => {
+        tile.classList.remove('status-ok', 'status-warn', 'status-danger');
+      });
+
+      const applyStatus = (element, result) => {
+        const tile = element.parentElement;
+        if (result === 'OK') tile.classList.add('status-ok');
+        else if (result === 'WARN') tile.classList.add('status-warn');
+        else tile.classList.add('status-danger');
+      };
+
+      applyStatus(liveTemp, t);
+      applyStatus(liveHum, h);
+      applyStatus(liveLight, l);
+      applyStatus(liveSoil, s);
+
+      // If any parameter is non-OK, darken the surrounding page a little for visibility
+      if ([t, h, l, s].some(st => st !== 'OK')) {
+        document.body.style.background = 'radial-gradient(circle at top right, var(--bg) 40%, rgba(0,0,0,0.04) 100%)';
+      } else {
+        document.body.style.background = 'var(--bg)';
+      }
+    }
+
+    function patchWeather() {
+      if (!navigator.geolocation) { feedback.textContent='Geolocation not supported.'; return; }
+      navigator.geolocation.getCurrentPosition(async pos => {
+        const lat = pos.coords.latitude.toFixed(4);
+        const lon = pos.coords.longitude.toFixed(4);
+        const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&hourly=relativehumidity_2m`;
+        try {
+          const r = await fetch(url);
+          if (!r.ok) throw new Error('Fetch failed');
+          const data = await r.json();
+          const w = data.current_weather || { temperature: 22, windspeed: 7 };
+          const hum = (data.hourly?.relativehumidity_2m?.[0] || 70);
+          setLive(Math.round(w.temperature*10)/10, hum, Math.round(w.windspeed*1200), 72);
+          feedback.textContent = `Live weather set for ${lat}, ${lon}.`;
+          feedback.style.color = '#16a34a';
+          highlightLive(crops.find(c => c.crop === select.value));
+        } catch (e) {
+          feedback.textContent = 'Weather data fetch failed, using demo values.';
+          feedback.style.color = '#dc2626';
+        }
+      }, err => {
+        feedback.textContent = 'Allow location permission for live weather.';
+        feedback.style.color = '#dc2626';
+      });
+    }
+
+    search.addEventListener('input', e => render(crops.filter(c => c.crop.toLowerCase().includes(e.target.value.toLowerCase()))));
+    reset.addEventListener('click', () => { search.value=''; render(crops); });
+    weatherBtn.addEventListener('click', patchWeather);
+
+    select.addEventListener('change', e => highlightLive(crops.find(c => c.crop === e.target.value)));
+
+    document.getElementById('addCropBtn').addEventListener('click', () => {
+      const getVal = id => document.getElementById(id).value.trim();
+      const newEntry = { crop:getVal('newCrop'), temp:getVal('newTemp'), hum:getVal('newHum'), light:getVal('newLight'), soil:getVal('newSoil'), notes:getVal('newNotes')||'Custom' };
+      if (!newEntry.crop || !newEntry.temp || !newEntry.hum || !newEntry.light || !newEntry.soil) {
+        feedback.textContent='Please fill all fields.';
+        feedback.style.color='#dc2626';
+        return;
+      }
+      crops.push(newEntry);
+      render(crops);
+      feedback.textContent=`${newEntry.crop} added.`;
+      feedback.style.color='#16a34a';
+      ['newCrop','newTemp','newHum','newLight','newSoil','newNotes'].forEach(id=>document.getElementById(id).value='');
+    });
+
+    render(crops);
+    setLive(23.6,74,18000,73);
+  </script>
+</body>
+</html>

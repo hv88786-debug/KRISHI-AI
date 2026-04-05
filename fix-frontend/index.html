@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>कृषि AI🌾 — Smart Farming Ecosystem</title>
+<link rel="stylesheet" href="style.css">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+.hero{min-height:100vh;background:linear-gradient(160deg,#071a0e 0%,#0d2818 35%,#0f3d1f 65%,#155c2d 100%);display:flex;align-items:center;padding:0 5%;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%234ade80' fill-opacity='0.04'%3E%3Cpath d='M40 40c0-11-9-20-20-20S0 29 0 40s9 20 20 20 20-9 20-20zm20 0c0 11 9 20 20 20s20-9 20-20-9-20-20-20-20 9-20 20z'/%3E%3C/g%3E%3C/svg%3E")}
+.hero-particles{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.particle{position:absolute;width:2px;height:2px;background:#4ade80;border-radius:50%;opacity:0;animation:particleFloat linear infinite}
+@keyframes particleFloat{0%{opacity:0;transform:translateY(100vh) scale(0)}10%{opacity:0.6}90%{opacity:0.3}100%{opacity:0;transform:translateY(-20px) scale(1)}}
+.hero-inner{max-width:1200px;margin:0 auto;width:100%;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;padding-top:64px}
+.hero-tag{display:inline-flex;align-items:center;gap:8px;background:rgba(74,222,128,0.12);border:1px solid rgba(74,222,128,0.3);border-radius:20px;padding:6px 16px;font-size:12px;font-weight:600;color:#4ade80;letter-spacing:0.8px;text-transform:uppercase;margin-bottom:10px}
+.live-dot{width:7px;height:7px;border-radius:50%;background:#4ade80;animation:pulse 1.5s infinite}
+.ai-active-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.25);border-radius:20px;padding:5px 12px;font-size:11px;font-weight:600;color:#86efac;margin-left:8px;animation:badgePulse 2s ease-in-out infinite}
+@keyframes badgePulse{0%,100%{box-shadow:0 0 0 0 rgba(74,222,128,0.3)}50%{box-shadow:0 0 0 6px rgba(74,222,128,0)}}
+.hero h1{font-size:54px;font-weight:900;color:#fff;line-height:1.1;letter-spacing:-2px;margin-bottom:20px}
+.hero h1 .accent{color:#4ade80;display:block}
+.hero-sub{font-size:17px;color:rgba(255,255,255,0.65);line-height:1.7;margin-bottom:14px;max-width:480px}
+.hero-live-line{display:flex;align-items:center;gap:8px;font-size:13px;color:#86efac;margin-bottom:32px;font-weight:500}
+.hero-live-line .blink{width:8px;height:8px;border-radius:50%;background:#4ade80;animation:pulse 1s infinite}
+.hero-btns{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:48px}
+.hero-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.hstat{border-left:2px solid rgba(74,222,128,0.3);padding-left:16px}
+.hstat-num{font-size:28px;font-weight:800;color:#fff;letter-spacing:-0.5px}
+.hstat-label{font-size:11px;color:rgba(255,255,255,0.45);margin-top:2px}
+.hero-visual{position:relative;z-index:1}
+.mockup-window{background:#fff;border-radius:24px;box-shadow:0 40px 100px rgba(0,0,0,0.6);overflow:hidden;animation:float 4s ease-in-out infinite}
+.mockup-bar{background:#f8fafc;border-bottom:1px solid #e2e8f0;padding:10px 16px;display:flex;align-items:center;gap:8px}
+.mockup-dot{width:10px;height:10px;border-radius:50%}
+.mockup-content{padding:16px;background:#f8faf6}
+.mock-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px}
+.mock-metric{background:#fff;border-radius:8px;padding:10px;border-left:3px solid #22c55e}
+.mock-m-label{font-size:9px;color:#94a3b8;font-weight:500;text-transform:uppercase}
+.mock-m-val{font-size:16px;font-weight:700;color:#0f172a;margin-top:2px}
+.mock-row{display:grid;grid-template-columns:1.2fr 0.8fr;gap:8px}
+.mock-card{background:#fff;border-radius:8px;padding:12px}
+.mock-card-title{font-size:10px;font-weight:600;color:#0f172a;margin-bottom:8px}
+.mock-sensor-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid #f1f5f9;font-size:9px}
+.mock-sensor-row:last-child{border-bottom:none}
+.ms-name{color:#475569}.ms-val{font-weight:600}.ms-good{color:#16a34a}.ms-warn{color:#d97706}
+.mock-alert{padding:5px 8px;border-radius:5px;font-size:8.5px;margin-bottom:4px;font-weight:500}
+.ma-warn{background:#fef3c7;color:#92400e}.ma-ok{background:#f0fdf4;color:#166534}.ma-err{background:#fef2f2;color:#991b1b}
+.float-badge{position:absolute;background:#fff;border-radius:12px;padding:10px 14px;box-shadow:0 8px 32px rgba(0,0,0,0.2);font-size:11px;font-weight:600;display:flex;align-items:center;gap:8px;border:1px solid #e2e8f0;animation:float 3s ease-in-out infinite;z-index:10;white-space:nowrap}
+.fb1{top:-18px;right:10px;animation-delay:0.5s}.fb2{bottom:20px;left:-10px;animation-delay:1s}.fb3{top:42%;right:-10px;animation-delay:1.5s}
+.fb-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.live-soil-badge{position:absolute;top:20px;left:10px;background:linear-gradient(135deg,#0d2818,#0f3d1f);border:1px solid rgba(74,222,128,0.4);border-radius:14px;padding:10px 16px;display:flex;align-items:center;gap:10px;animation:badgePulse 2s infinite;z-index:10}
+.lsb-text{color:#fff;font-size:11px;font-weight:600}
+.lsb-sub{color:#4ade80;font-size:10px}
+
+/* SYSTEM FLOW */
+.flow-section{background:linear-gradient(180deg,#0d1117 0%,#0d1a0f 100%);padding:80px 5%}
+.flow-inner{max-width:1200px;margin:0 auto}
+.flow-diagram{display:flex;align-items:flex-start;justify-content:center;gap:0;margin-top:48px;flex-wrap:wrap}
+.flow-node{display:flex;flex-direction:column;align-items:center;gap:10px;flex:1;min-width:120px;max-width:180px}
+.flow-icon{width:64px;height:64px;border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:26px;border:2px solid rgba(74,222,128,0.2);background:rgba(74,222,128,0.06);animation:flowGlow 3s ease-in-out infinite}
+@keyframes flowGlow{0%,100%{box-shadow:0 0 20px rgba(74,222,128,0.1)}50%{box-shadow:0 0 30px rgba(74,222,128,0.25)}}
+.flow-label{font-size:13px;font-weight:700;color:#fff;text-align:center}
+.flow-sub{font-size:11px;color:#4ade80;text-align:center;font-weight:500;padding:0 8px}
+.flow-arrow{display:flex;align-items:center;padding:0 4px;padding-top:22px}
+.arrow-pipe{width:36px;height:2px;background:linear-gradient(90deg,rgba(74,222,128,0.3),rgba(74,222,128,0.8));position:relative;overflow:hidden}
+.arrow-pipe::after{content:'';position:absolute;top:0;left:-100%;width:50%;height:100%;background:rgba(74,222,128,0.9);animation:flowPacket 2s linear infinite}
+@keyframes flowPacket{0%{left:-50%}100%{left:150%}}
+.arrow-head{color:#4ade80;font-size:14px;margin-left:-4px}
+
+/* LIVE DEMO */
+.demo-section{background:#f0fdf4;padding:80px 5%}
+.demo-inner{max-width:1200px;margin:0 auto}
+.demo-panel{background:#fff;border-radius:24px;border:1px solid #bbf7d0;box-shadow:0 20px 60px rgba(22,163,74,0.1);overflow:hidden;margin-top:40px}
+.demo-panel-header{background:linear-gradient(135deg,#0d2818,#155c2d);padding:16px 24px;display:flex;align-items:center;justify-content:space-between}
+.demo-live-indicator{display:flex;align-items:center;gap:6px;background:rgba(74,222,128,0.2);border:1px solid rgba(74,222,128,0.3);border-radius:20px;padding:4px 12px}
+.demo-live-dot{width:7px;height:7px;border-radius:50%;background:#4ade80;animation:pulse 1s infinite}
+.demo-live-text{font-size:11px;font-weight:700;color:#4ade80;letter-spacing:1px;text-transform:uppercase}
+.demo-panel-title{font-size:14px;font-weight:700;color:#fff;margin-left:12px}
+.demo-time{font-size:12px;color:#4ade80;font-family:monospace}
+.demo-body{display:grid;grid-template-columns:repeat(3,1fr);gap:0}
+.demo-col{padding:24px;border-right:1px solid #f1f5f9}
+.demo-col:last-child{border-right:none}
+.demo-col-title{font-size:12px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:16px}
+.sensor-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #f8fafc}
+.sensor-row:last-child{border-bottom:none}
+.sensor-name{font-size:13px;color:#475569;font-weight:500}
+.sensor-val-wrap{display:flex;align-items:center;gap:8px}
+.sensor-val{font-size:14px;font-weight:700;color:#0f172a}
+.sensor-bar{width:48px;height:5px;background:#f1f5f9;border-radius:3px;overflow:hidden}
+.sensor-bar-fill{height:100%;border-radius:3px}
+.status-card{background:#f8faf6;border-radius:14px;padding:14px;margin-bottom:10px;border:1px solid #e2e8f0}
+.status-card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px}
+.status-label{font-size:12px;font-weight:700;color:#475569}
+.status-badge{padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700}
+.sb-on{background:#f0fdf4;color:#166534;border:1px solid #bbf7d0}
+.sb-alert{background:#fef3c7;color:#92400e;border:1px solid #fde68a}
+.status-val{font-size:20px;font-weight:800;color:#0f172a;letter-spacing:-0.5px}
+.status-sub{font-size:11px;color:#64748b;margin-top:2px}
+.ai-rec{background:linear-gradient(135deg,#f0fdf4,#dcfce7);border:1px solid #86efac;border-radius:14px;padding:14px;margin-bottom:10px}
+.ai-rec-head{display:flex;align-items:center;gap:6px;margin-bottom:6px}
+.ai-rec-title{font-size:12px;font-weight:700;color:#15803d}
+.ai-rec-text{font-size:12px;color:#166534;line-height:1.6}
+.ai-rec-conf{font-size:11px;color:#16a34a;margin-top:6px;font-weight:600}
+.demo-footer{background:#f8faf6;padding:14px 24px;border-top:1px solid #f1f5f9;display:flex;align-items:center;gap:8px;font-size:12px;color:#64748b}
+
+/* FEATURES */
+.features-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+.feature-card{background:#fff;border:1px solid #e2e8f0;border-radius:20px;padding:28px;position:relative;overflow:hidden;transition:all 0.25s}
+.feature-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;border-radius:20px 20px 0 0;background:linear-gradient(90deg,#22c55e,#4ade80);opacity:0;transition:opacity 0.25s}
+.feature-card:hover{transform:translateY(-6px);box-shadow:0 20px 48px rgba(0,0,0,0.1);border-color:#bbf7d0}
+.feature-card:hover::before{opacity:1}
+.feature-icon{width:52px;height:52px;border-radius:16px;display:flex;align-items:center;justify-content:center;margin-bottom:18px;font-size:24px}
+.feature-title{font-size:17px;font-weight:700;color:#0f172a;margin-bottom:8px}
+.feature-desc{font-size:14px;color:#475569;line-height:1.7}
+.feature-link{display:inline-flex;align-items:center;gap:4px;font-size:13px;font-weight:600;color:#16a34a;margin-top:14px;transition:gap 0.2s}
+.feature-link:hover{gap:8px}
+
+/* AI SECTION */
+.ai-section{background:#fff;padding:80px 5%}
+.ai-inner{max-width:1200px;margin:0 auto}
+.ai-features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:48px}
+.ai-feat-card{background:#f8faf6;border:1px solid #e2e8f0;border-radius:20px;padding:28px;position:relative;overflow:hidden;transition:all 0.3s}
+.ai-feat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#22c55e,#4ade80);opacity:0;transition:opacity 0.3s}
+.ai-feat-card:hover{transform:translateY(-8px);box-shadow:0 20px 60px rgba(22,163,74,0.12);border-color:#86efac}
+.ai-feat-card:hover::before{opacity:1}
+.ai-feat-num{font-size:40px;font-weight:900;color:rgba(74,222,128,0.2);letter-spacing:-2px;position:absolute;top:16px;right:20px;line-height:1}
+.ai-feat-icon{font-size:32px;margin-bottom:16px}
+.ai-feat-title{font-size:18px;font-weight:700;color:#0f172a;margin-bottom:8px}
+.ai-feat-desc{font-size:14px;color:#475569;line-height:1.7}
+.ai-feat-metric{display:inline-flex;align-items:center;gap:6px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:20px;padding:4px 12px;font-size:12px;font-weight:600;color:#15803d;margin-top:14px}
+
+/* HOW IT WORKS */
+.hiw-bg{background:#0d1117;padding:80px 5%}
+.hiw-inner{max-width:1200px;margin:0 auto}
+.hiw-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:48px;position:relative}
+.hiw-steps::before{content:'';position:absolute;top:28px;left:12.5%;right:12.5%;height:2px;background:linear-gradient(90deg,#166534,#22c55e,#4ade80);z-index:0}
+.hiw-step{text-align:center;padding:0 16px;position:relative;z-index:1}
+.hiw-num{width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#166534,#22c55e);color:#fff;font-size:20px;font-weight:800;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;border:3px solid #0d1117;box-shadow:0 0 0 3px #166534}
+.hiw-title{font-size:15px;font-weight:600;color:#fff;margin-bottom:8px}
+.hiw-desc{font-size:13px;color:#64748b;line-height:1.6}
+
+/* VOICE */
+.voice-section{background:linear-gradient(160deg,#0d2818 0%,#0d1117 100%);padding:80px 5%;position:relative;overflow:hidden}
+.voice-section::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 60% at 80% 50%,rgba(74,222,128,0.06) 0%,transparent 70%)}
+.voice-inner{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+.voice-title{font-size:38px;font-weight:800;color:#fff;letter-spacing:-1px;line-height:1.2;margin-bottom:14px}
+.voice-title span{color:#4ade80}
+.voice-sub{font-size:16px;color:rgba(255,255,255,0.6);line-height:1.8;margin-bottom:32px}
+.voice-features{display:flex;flex-direction:column;gap:12px;margin-bottom:32px}
+.voice-feat-row{display:flex;align-items:center;gap:12px;font-size:14px;color:rgba(255,255,255,0.75)}
+.voice-feat-check{width:22px;height:22px;border-radius:50%;background:rgba(74,222,128,0.15);border:1px solid rgba(74,222,128,0.3);display:flex;align-items:center;justify-content:center;font-size:11px;color:#4ade80;flex-shrink:0}
+.call-btn{display:inline-flex;align-items:center;gap:12px;background:linear-gradient(135deg,#16a34a,#22c55e);color:#fff;padding:16px 28px;border-radius:16px;font-size:15px;font-weight:700;cursor:pointer;border:none;transition:all 0.3s;font-family:'Outfit',sans-serif;text-decoration:none;box-shadow:0 8px 32px rgba(34,197,94,0.3)}
+.call-btn:hover{transform:translateY(-3px);box-shadow:0 16px 48px rgba(34,197,94,0.4)}
+.call-btn-icon{font-size:20px;animation:ringShake 2s infinite}
+@keyframes ringShake{0%,90%,100%{transform:rotate(0)}15%{transform:rotate(15deg)}30%{transform:rotate(-15deg)}45%{transform:rotate(10deg)}60%{transform:rotate(-10deg)}75%{transform:rotate(5deg)}}
+.voice-right{display:flex;flex-direction:column;gap:14px}
+.lang-card{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:18px 22px;display:flex;align-items:center;gap:16px;transition:all 0.3s}
+.lang-card:hover{background:rgba(74,222,128,0.08);border-color:rgba(74,222,128,0.2);transform:translateX(6px)}
+.lang-flag{font-size:28px}
+.lang-info-name{font-size:15px;font-weight:600;color:#fff}
+.lang-info-reg{font-size:12px;color:#4ade80;margin-top:2px}
+.lang-farmers{margin-left:auto;font-size:12px;color:#64748b;text-align:right}
+.lang-farmers span{display:block;font-size:14px;font-weight:700;color:#fff}
+.toll-free-box{background:rgba(74,222,128,0.1);border:1px solid rgba(74,222,128,0.25);border-radius:16px;padding:18px 22px;display:flex;align-items:center;gap:16px}
+.tf-num{font-size:22px;font-weight:800;color:#4ade80;letter-spacing:1px;font-family:monospace}
+.tf-tag{font-size:11px;color:rgba(255,255,255,0.5);margin-top:2px}
+
+/* MARKET */
+.market-section{background:#f8faf6;padding:80px 5%}
+.market-inner{max-width:1200px;margin:0 auto}
+.market-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:40px}
+.market-card{background:#fff;border:1px solid #e2e8f0;border-radius:20px;padding:22px;transition:all 0.3s}
+.market-card:hover{transform:translateY(-6px);box-shadow:0 16px 48px rgba(0,0,0,0.1)}
+.market-card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px}
+.market-mandi{font-size:14px;font-weight:700;color:#0f172a}
+.market-dist{font-size:11px;color:#94a3b8;margin-top:2px}
+.market-badge-best{background:#f0fdf4;color:#166534;border:1px solid #bbf7d0;border-radius:20px;padding:3px 10px;font-size:10px;font-weight:700}
+.market-badge-good{background:#eff6ff;color:#1e40af;border:1px solid #bfdbfe;border-radius:20px;padding:3px 10px;font-size:10px;font-weight:700}
+.market-crop{font-size:12px;color:#64748b;margin-bottom:4px}
+.market-price{font-size:28px;font-weight:800;color:#0f172a;letter-spacing:-0.5px}
+.market-price span{font-size:13px;font-weight:500;color:#94a3b8}
+.market-trend{display:flex;align-items:center;gap:4px;font-size:12px;font-weight:600;margin-top:6px}
+.trend-up{color:#16a34a}.trend-down{color:#dc2626}
+.market-bar{height:4px;background:#f1f5f9;border-radius:2px;margin-top:12px;overflow:hidden}
+.market-bar-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,#22c55e,#4ade80)}
+.market-best-banner{background:linear-gradient(135deg,#0d2818,#155c2d);border-radius:20px;padding:24px;display:flex;align-items:center;justify-content:space-between;margin-top:16px;border:1px solid rgba(74,222,128,0.2)}
+.mbb-left{color:#fff}
+.mbb-title{font-size:13px;color:#4ade80;font-weight:600;margin-bottom:4px}
+.mbb-main{font-size:20px;font-weight:800;color:#fff}
+.mbb-sub{font-size:13px;color:rgba(255,255,255,0.6);margin-top:2px}
+.mbb-cta{background:rgba(74,222,128,0.15);border:1px solid rgba(74,222,128,0.3);color:#4ade80;padding:10px 20px;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.2s;text-decoration:none;white-space:nowrap}
+.mbb-cta:hover{background:rgba(74,222,128,0.25)}
+
+/* IMPACT */
+.impact-section{background:#fff;padding:80px 5%}
+.impact-inner{max-width:1200px;margin:0 auto}
+.impact-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:48px}
+.impact-card{border-radius:24px;padding:36px;text-align:center}
+.impact-card-1{background:linear-gradient(135deg,#f0fdf4,#dcfce7);border:1px solid #86efac}
+.impact-card-2{background:linear-gradient(135deg,#eff6ff,#dbeafe);border:1px solid #93c5fd}
+.impact-card-3{background:linear-gradient(135deg,#fef3c7,#fde68a44);border:1px solid #fbbf24}
+.impact-icon{font-size:48px;margin-bottom:16px}
+.impact-num{font-size:56px;font-weight:900;letter-spacing:-3px;line-height:1;margin-bottom:8px}
+.ic1 .impact-num{color:#15803d}
+.ic2 .impact-num{color:#1d4ed8}
+.ic3 .impact-num{color:#b45309}
+.impact-label{font-size:16px;font-weight:700;color:#0f172a;margin-bottom:6px}
+.impact-desc{font-size:13px;color:#64748b;line-height:1.6}
+.impact-bar{height:8px;border-radius:4px;margin-top:18px;background:rgba(255,255,255,0.6);overflow:hidden}
+.impact-bar-fill{height:100%;border-radius:4px;animation:barGrow 1.8s ease-out 0.5s both}
+@keyframes barGrow{from{width:0 !important}}
+.ic1 .impact-bar-fill{background:linear-gradient(90deg,#22c55e,#4ade80);width:40%}
+.ic2 .impact-bar-fill{background:linear-gradient(90deg,#3b82f6,#60a5fa);width:25%}
+.ic3 .impact-bar-fill{background:linear-gradient(90deg,#f59e0b,#fbbf24);width:30%}
+
+/* TESTIMONIALS */
+.testi-bg{background:#f0fdf4;padding:80px 5%}
+.testi-inner{max-width:1200px;margin:0 auto}
+.testi-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;margin-top:40px}
+.testi-card{background:#fff;border:1px solid #bbf7d0;border-radius:20px;padding:24px}
+.testi-stars{color:#f59e0b;font-size:14px;margin-bottom:12px;letter-spacing:2px}
+.testi-text{font-size:14px;color:#475569;line-height:1.8;font-style:italic;margin-bottom:16px;font-family:'Lora',serif}
+.testi-farmer{display:flex;align-items:center;gap:10px}
+.testi-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#16a34a,#4ade80);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0}
+.testi-name{font-size:13px;font-weight:600;color:#0f172a}
+.testi-loc{font-size:11px;color:#94a3b8}
+
+/* CTA */
+.cta-section{background:linear-gradient(135deg,#14532d,#15803d);padding:80px 5%;text-align:center;position:relative;overflow:hidden}
+.cta-section::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%234ade80' fill-opacity='0.05'%3E%3Ccircle cx='30' cy='30' r='20'/%3E%3C/g%3E%3C/svg%3E")}
+.cta-inner{max-width:640px;margin:0 auto;position:relative;z-index:1}
+.cta-title{font-size:40px;font-weight:800;color:#fff;letter-spacing:-1px;margin-bottom:14px}
+.cta-sub{font-size:17px;color:rgba(255,255,255,0.65);margin-bottom:32px}
+.cta-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+
+/* REVEAL */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity 0.7s ease,transform 0.7s ease}
+.reveal.visible{opacity:1;transform:none}
+.reveal-delay-1{transition-delay:0.1s}.reveal-delay-2{transition-delay:0.2s}
+.reveal-delay-3{transition-delay:0.3s}.reveal-delay-4{transition-delay:0.4s}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.6;transform:scale(1.2)}}
+.anim-fade-up{animation:fadeUp 0.7s ease both}
+.anim-delay-1{animation-delay:0.1s}.anim-delay-2{animation-delay:0.2s}
+.anim-delay-3{animation-delay:0.3s}.anim-delay-4{animation-delay:0.4s}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-icon">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 2C7 2 4 5.5 4 9.5c0 3 1.5 5.5 3.8 6.8L10 18l2.2-1.7C14.5 15 16 12.5 16 9.5 16 5.5 13 2 10 2z" fill="rgba(255,255,255,0.95)"/><path d="M10 7v5M8 9l2-2 2 2" stroke="rgba(21,128,61,0.9)" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+      <div class="nav-logo-text">कृषि<span>AI</span>🌾</div>
+    </a>
+    <div class="nav-links">
+      <a href="index.html" class="active">Home</a>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="disease.html">Disease AI</a>
+      <a href="market.html">Market</a>
+      <a href="schemes.html">Schemes</a>
+      <a href="polyhouse.html">Polyhouse</a>
+      <a href="about.html">About</a>
+    </div>
+    <a href="dashboard.html" class="btn btn-green" style="font-size:13px;padding:8px 18px;">Open Dashboard →</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-particles" id="particles"></div>
+  <div class="hero-inner">
+    <div class="anim-fade-up">
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:22px">
+        <div class="hero-tag"><div class="live-dot"></div>AI-Powered Farming Platform</div>
+        <div class="ai-active-badge">⚡ AI Detection Active</div>
+      </div>
+      <h1>Smart Farming<span class="accent">for Every Farmer</span></h1>
+      <p class="hero-sub">कृषि AI🌾 combines IoT sensors, artificial intelligence, and market intelligence to help farmers grow more, waste less, and earn better.</p>
+      <div class="hero-live-line"><div class="blink"></div>Real-time AI monitoring active on 4,200+ farms right now</div>
+      <div class="hero-btns">
+        <a href="dashboard.html" class="btn btn-green">Explore Dashboard →</a>
+        <a href="disease.html" class="btn" style="background:rgba(255,255,255,0.1);color:#fff;border:1px solid rgba(255,255,255,0.2)">Try Disease AI</a>
+      </div>
+      <div class="hero-stats">
+        <div class="hstat"><div class="hstat-num" data-count="4200">4.2K+</div><div class="hstat-label">Farmers using platform</div></div>
+        <div class="hstat"><div class="hstat-num" data-count="98">98%</div><div class="hstat-label">Disease detection accuracy</div></div>
+        <div class="hstat"><div class="hstat-num" data-count="40">40%</div><div class="hstat-label">Water savings avg.</div></div>
+      </div>
+    </div>
+    <div class="hero-visual anim-fade-up anim-delay-3">
+
+      <div class="mockup-window">
+        <div class="mockup-bar">
+          <div class="mockup-dot" style="background:#ef4444"></div>
+          <div class="mockup-dot" style="background:#f59e0b"></div>
+          <div class="mockup-dot" style="background:#22c55e"></div>
+          <span style="font-size:11px;color:#94a3b8;margin-left:8px">कृषि  AI🌾 — Live Dashboard</span>
+        </div>
+        <div class="mockup-content">
+          <div class="mock-metrics">
+            <div class="mock-metric" style="border-left-color:#f59e0b"><div class="mock-m-label">Moisture</div><div class="mock-m-val" style="color:#d97706" id="hero-moisture">42%</div></div>
+            <div class="mock-metric" style="border-left-color:#22c55e"><div class="mock-m-label">Health</div><div class="mock-m-val" style="color:#16a34a" id="hero-health">78/100</div></div>
+            <div class="mock-metric" style="border-left-color:#3b82f6"><div class="mock-m-label">Humidity</div><div class="mock-m-val" style="color:#2563eb" id="hero-humidity">65%</div></div>
+            <div class="mock-metric" style="border-left-color:#8b5cf6"><div class="mock-m-label">Temp</div><div class="mock-m-val" style="color:#7c3aed" id="hero-temp">34°C</div></div>
+          </div>
+          <div class="mock-row">
+            <div class="mock-card">
+              <div class="mock-card-title">Live Sensors</div>
+              <div class="mock-sensor-row"><span class="ms-name">Soil pH</span><span class="ms-val ms-good" id="hero-ph">6.8 ✓</span></div>
+              <div class="mock-sensor-row"><span class="ms-name">Humidity</span><span class="ms-val ms-good" id="hero-hum2">65%</span></div>
+              <div class="mock-sensor-row"><span class="ms-name">EC Level</span><span class="ms-val ms-warn" id="hero-ec">2.1 ↑</span></div>
+              <div class="mock-sensor-row"><span class="ms-name">Nitrogen</span><span class="ms-val ms-good" id="hero-npk">Medium</span></div>
+            </div>
+            <div class="mock-card">
+              <div class="mock-card-title">AI Alerts</div>
+              <div class="mock-alert ma-warn">⚠ Low moisture — Zone 1</div>
+              <div class="mock-alert ma-err">🐛 Pest risk detected</div>
+              <div class="mock-alert ma-ok">⚡ Auto mode — ON</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SYSTEM FLOW -->
+<div class="flow-section">
+  <div class="flow-inner">
+    <div class="text-center">
+      <div class="section-tag" style="background:rgba(74,222,128,0.1);border-color:rgba(74,222,128,0.2);color:#4ade80;margin:0 auto 14px">System Architecture</div>
+      <div class="section-title text-center" style="color:#fff;margin-bottom:8px">From <span>Sensor to Action</span> in seconds</div>
+      <p style="color:#4ade80;font-size:13px;text-align:center;font-weight:600;margin-top:8px;letter-spacing:0.5px">Sensor → AI Engine → Smart Decision → Farmer Alert → Market Action</p>
+    </div>
+    <div class="flow-diagram">
+      <div class="flow-node reveal reveal-delay-1"><div class="flow-icon">📡</div><div class="flow-label">IoT Sensor</div><div class="flow-sub">ESP32 collects data every 30s</div></div>
+      <div class="flow-arrow"><div class="arrow-pipe"></div><span class="arrow-head">▶</span></div>
+      <div class="flow-node reveal reveal-delay-2"><div class="flow-icon" style="animation-delay:0.6s">🧠</div><div class="flow-label">AI Engine</div><div class="flow-sub">CNN + ML models analyze instantly</div></div>
+      <div class="flow-arrow"><div class="arrow-pipe" style="animation-delay:0.4s"></div><span class="arrow-head">▶</span></div>
+      <div class="flow-node reveal reveal-delay-3"><div class="flow-icon" style="animation-delay:1.2s">⚙️</div><div class="flow-label">Smart Decision</div><div class="flow-sub">Automate or recommend action</div></div>
+      <div class="flow-arrow"><div class="arrow-pipe" style="animation-delay:0.8s"></div><span class="arrow-head">▶</span></div>
+      <div class="flow-node reveal reveal-delay-4"><div class="flow-icon" style="animation-delay:1.8s">📱</div><div class="flow-label">Farmer Alert</div><div class="flow-sub">App push + Voice notification</div></div>
+      <div class="flow-arrow"><div class="arrow-pipe" style="animation-delay:1.2s"></div><span class="arrow-head">▶</span></div>
+      <div class="flow-node reveal" style="transition-delay:0.5s"><div class="flow-icon" style="animation-delay:2.4s">💰</div><div class="flow-label">Market Action</div><div class="flow-sub">Best mandi, best price today</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- LIVE DEMO -->
+<section class="demo-section">
+  <div class="demo-inner">
+    <div class="text-center">
+      <div class="section-tag" style="margin:0 auto 16px">🔴 Live Demo</div>
+      <div class="section-title text-center reveal">Real-time <span>AI Monitoring</span> Panel</div>
+      <p class="section-sub text-center reveal" style="margin:12px auto 0">Watch the platform work — live sensor data, AI decisions, and crop recommendations</p>
+    </div>
+    <div class="demo-panel reveal">
+      <div class="demo-panel-header">
+        <div style="display:flex;align-items:center;gap:12px">
+          <div class="demo-live-indicator"><div class="demo-live-dot"></div><div class="demo-live-text">Live</div></div>
+          <div class="demo-panel-title">कृषि  AI🌾 Farm Monitor — Ramesh Kumar's Farm, Ajmer</div>
+        </div>
+        <div class="demo-time" id="liveTime">--:--:--</div>
+      </div>
+      <div class="demo-body">
+        <div class="demo-col">
+          <div class="demo-col-title">📡 Sensor Readings</div>
+          <div class="sensor-row"><span class="sensor-name">Soil Moisture</span><div class="sensor-val-wrap"><span class="sensor-val" id="smVal" style="color:#f59e0b">32%</span><div class="sensor-bar"><div class="sensor-bar-fill" id="smBar" style="width:32%;background:linear-gradient(90deg,#f59e0b,#fbbf24)"></div></div></div></div>
+          <div class="sensor-row"><span class="sensor-name">Soil pH</span><div class="sensor-val-wrap"><span class="sensor-val" style="color:#16a34a">6.8</span><div class="sensor-bar"><div class="sensor-bar-fill" style="width:68%;background:linear-gradient(90deg,#22c55e,#4ade80)"></div></div></div></div>
+          <div class="sensor-row"><span class="sensor-name">Temperature</span><div class="sensor-val-wrap"><span class="sensor-val">34°C</span><div class="sensor-bar"><div class="sensor-bar-fill" style="width:68%;background:linear-gradient(90deg,#f97316,#fb923c)"></div></div></div></div>
+          <div class="sensor-row"><span class="sensor-name">Humidity</span><div class="sensor-val-wrap"><span class="sensor-val" style="color:#3b82f6">61%</span><div class="sensor-bar"><div class="sensor-bar-fill" style="width:61%;background:linear-gradient(90deg,#3b82f6,#60a5fa)"></div></div></div></div>
+          <div class="sensor-row"><span class="sensor-name">EC Level</span><div class="sensor-val-wrap"><span class="sensor-val" style="color:#d97706">2.1 mS</span><div class="sensor-bar"><div class="sensor-bar-fill" style="width:42%;background:linear-gradient(90deg,#f59e0b,#fbbf24)"></div></div></div></div>
+          <div class="sensor-row"><span class="sensor-name">Nitrogen</span><div class="sensor-val-wrap"><span class="sensor-val" style="color:#16a34a">Medium</span><div class="sensor-bar"><div class="sensor-bar-fill" style="width:55%;background:linear-gradient(90deg,#22c55e,#4ade80)"></div></div></div></div>
+        </div>
+        <div class="demo-col">
+          <div class="demo-col-title">⚙️ System Status</div>
+          <div class="status-card"><div class="status-card-top"><span class="status-label">💧 Irrigation</span><span class="status-badge sb-on">ON</span></div><div class="status-val">Running</div><div class="status-sub">Pump A active — Zone 1 & 2</div></div>
+          <div class="status-card"><div class="status-card-top"><span class="status-label">🐛 Disease Scan</span><span class="status-badge sb-alert">ALERT</span></div><div class="status-val" style="color:#d97706">Leaf Spot</div><div class="status-sub">Detected on wheat — Zone 3</div></div>
+          <div class="status-card"><div class="status-card-top"><span class="status-label">🌤️ Weather</span><span class="status-badge sb-on">CLEAR</span></div><div class="status-val">34°C</div><div class="status-sub">No rain expected — irrigate today</div></div>
+        </div>
+        <div class="demo-col">
+          <div class="demo-col-title">🤖 AI Recommendations</div>
+          <div class="ai-rec" style="margin-bottom:10px"><div class="ai-rec-head"><span>💧</span><div class="ai-rec-title">Irrigation Advisory</div></div><div class="ai-rec-text">Moisture critically low at 32%. Start irrigation immediately for Zone 1. Estimated 45 min at current flow rate will restore optimal levels.</div><div class="ai-rec-conf">Confidence: 94% · Auto-triggered ✓</div></div>
+          <div class="ai-rec" style="background:linear-gradient(135deg,#fef3c7,#fde68a33);border-color:#fbbf24"><div class="ai-rec-head"><span>🐛</span><div class="ai-rec-title" style="color:#92400e">Disease Treatment</div></div><div class="ai-rec-text" style="color:#78350f">Leaf Spot detected. Apply Mancozeb 75% WP @ 2g/L water. Spray in evening. Repeat after 7 days.</div><div class="ai-rec-conf" style="color:#d97706">Confidence: 91% · Detected via image scan</div></div>
+        </div>
+      </div>
+      <div class="demo-footer"><span>🔄 Data refreshes every 30 seconds</span><span style="margin-left:auto">Powered by कृषि AI🌾 · ESP32 + CNN Model v2.1</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section style="padding:80px 5%;background:#f8faf6">
+  <div style="max-width:1200px;margin:0 auto">
+    <div class="text-center mb-16">
+      <div class="section-tag" style="margin:0 auto 16px">Complete Ecosystem</div>
+      <div class="section-title text-center reveal" style="margin:0 auto 12px">Everything a farmer needs, <span>in one platform</span></div>
+      <p class="section-sub text-center reveal" style="margin:0 auto">From soil sensors to market prices — कृषि  AI🌾 covers the complete farming lifecycle.</p>
+    </div>
+    <div class="features-grid mt-48">
+      <div class="feature-card reveal reveal-delay-1"><div class="feature-icon" style="background:#f0fdf4">🌿</div><div class="feature-title">IoT Soil Monitoring</div><div class="feature-desc">Real-time soil moisture, pH, temperature, and EC sensors connected to automated irrigation pumps. Smart farming starts from the ground up.</div><div class="feature-link">Learn more →</div></div>
+      <div class="feature-card reveal reveal-delay-2"><div class="feature-icon" style="background:#fef2f2">🔬</div><div class="feature-title">AI Disease Detection</div><div class="feature-desc">Upload a leaf photo and our CNN model instantly detects diseases and pest infections with 98% accuracy, suggesting the right treatment.</div><a href="disease.html" class="feature-link">Try it now →</a></div>
+      <div class="feature-card reveal reveal-delay-3"><div class="feature-icon" style="background:#eff6ff">💧</div><div class="feature-title">Smart Irrigation</div><div class="feature-desc">AI decides when and how much to water based on live sensor data, weather forecast, and crop type — saving up to 40% water usage.</div><a href="dashboard.html" class="feature-link">See dashboard →</a></div>
+      <div class="feature-card reveal reveal-delay-1"><div class="feature-icon" style="background:#fef3c7">📈</div><div class="feature-title">Market Intelligence</div><div class="feature-desc">Live mandi prices from Ajmer, Jaipur, Kishangarh and 50+ markets. AI predicts future prices so you sell at the right time.</div><a href="market.html" class="feature-link">Check prices →</a></div>
+      <div class="feature-card reveal reveal-delay-2"><div class="feature-icon" style="background:#f5f3ff">🏛️</div><div class="feature-title">Govt Scheme Finder</div><div class="feature-desc">Automatically match farmers to eligible PM Kisan, Soil Health Card, crop insurance, and 100+ government subsidy schemes.</div><a href="schemes.html" class="feature-link">Find schemes →</a></div>
+      <div class="feature-card reveal reveal-delay-3"><div class="feature-icon" style="background:#fff1f2">☎️</div><div class="feature-title">Voice AI Assistant</div><div class="feature-desc">Farmers without smartphones can call our toll-free number and access all AI features through voice — in Hindi and local languages.</div><div class="feature-link">Call AI Now →</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- AI POWER SECTION -->
+<section class="ai-section">
+  <div class="ai-inner">
+    <div class="text-center">
+      <div class="section-tag" style="margin:0 auto 16px">🤖 AI Intelligence</div>
+      <div class="section-title text-center reveal">Powered by <span>AI Intelligence</span></div>
+      <p class="section-sub text-center reveal" style="margin:12px auto 0">Three powerful AI engines working together to optimize every aspect of your farm</p>
+    </div>
+    <div class="ai-features-grid">
+      <div class="ai-feat-card reveal reveal-delay-1"><div class="ai-feat-num">01</div><div class="ai-feat-icon">🌾</div><div class="ai-feat-title">Crop Recommendation</div><div class="ai-feat-desc">Our ML model analyzes soil NPK, pH, temperature, humidity, and rainfall data to recommend the most profitable crop for your specific field conditions.</div><div class="ai-feat-metric">✓ 95% accuracy · 12 crop types</div></div>
+      <div class="ai-feat-card reveal reveal-delay-2"><div class="ai-feat-num">02</div><div class="ai-feat-icon">🔬</div><div class="ai-feat-title">Disease Detection</div><div class="ai-feat-desc">CNN-based computer vision model trained on 50,000+ leaf images identifies 38 plant diseases in real-time. Just take a photo — our AI does the rest.</div><div class="ai-feat-metric">✓ 98% accuracy · 38 diseases</div></div>
+      <div class="ai-feat-card reveal reveal-delay-3"><div class="ai-feat-num">03</div><div class="ai-feat-icon">📊</div><div class="ai-feat-title">Price Prediction</div><div class="ai-feat-desc">Time-series forecasting model predicts mandi prices 7–14 days in advance using historical data, weather patterns, and market trends. Sell smarter.</div><div class="ai-feat-metric">✓ 7-day forecast · 50+ mandis</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<div class="hiw-bg">
+  <div class="hiw-inner">
+    <div class="text-center">
+      <div class="section-tag" style="background:rgba(74,222,128,0.1);border-color:rgba(74,222,128,0.2);color:#4ade80;margin:0 auto 14px">How It Works</div>
+      <div class="section-title text-center reveal" style="color:#fff;margin-bottom:8px">From <span>sensor to action</span> in seconds</div>
+      <p style="color:#64748b;font-size:16px;text-align:center">The complete pipeline that powers intelligent farming</p>
+    </div>
+    <div class="hiw-steps">
+      <div class="hiw-step reveal reveal-delay-1"><div class="hiw-num">1</div><div class="hiw-title">Sensor Collects Data</div><div class="hiw-desc">ESP32 reads soil moisture, pH, temp, humidity every 30 seconds and sends to cloud</div></div>
+      <div class="hiw-step reveal reveal-delay-2"><div class="hiw-num">2</div><div class="hiw-title">AI Analyzes</div><div class="hiw-desc">ML models process data, detect anomalies, predict disease risk and irrigation needs</div></div>
+      <div class="hiw-step reveal reveal-delay-3"><div class="hiw-num">3</div><div class="hiw-title">Smart Decision</div><div class="hiw-desc">System auto-irrigates, sends alerts, or recommends the best action to take</div></div>
+      <div class="hiw-step reveal reveal-delay-4"><div class="hiw-num">4</div><div class="hiw-title">Farmer Acts</div><div class="hiw-desc">Push notification on app or call on toll-free number — farmer always informed</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- MARKET -->
+<section class="market-section">
+  <div class="market-inner">
+    <div class="text-center">
+      <div class="section-tag" style="margin:0 auto 16px">📈 Market Intelligence</div>
+      <div class="section-title text-center reveal">Best <span>Mandi Prices</span> Today</div>
+      <p class="section-sub text-center reveal" style="margin:12px auto 0">Live price comparison across nearby mandis — sell where you earn the most</p>
+    </div>
+    <div class="market-cards">
+      <div class="market-card reveal reveal-delay-1"><div class="market-card-top"><div><div class="market-mandi">🏪 Jaipur Mandi</div><div class="market-dist">45 km away</div></div><div class="market-badge-best">⭐ Best Price</div></div><div class="market-crop">Wheat (Gehun)</div><div class="market-price">₹2,450 <span>/quintal</span></div><div class="market-trend trend-up">↑ +₹120 vs yesterday</div><div class="market-bar"><div class="market-bar-fill" style="width:95%"></div></div></div>
+      <div class="market-card reveal reveal-delay-2"><div class="market-card-top"><div><div class="market-mandi">🏪 Ajmer Mandi</div><div class="market-dist">12 km away</div></div><div class="market-badge-good">Nearest</div></div><div class="market-crop">Wheat (Gehun)</div><div class="market-price">₹2,280 <span>/quintal</span></div><div class="market-trend trend-down">↓ −₹40 vs yesterday</div><div class="market-bar"><div class="market-bar-fill" style="width:75%"></div></div></div>
+      <div class="market-card reveal reveal-delay-3"><div class="market-card-top"><div><div class="market-mandi">🏪 Kishangarh Mandi</div><div class="market-dist">28 km away</div></div><div class="market-badge-good">Average</div></div><div class="market-crop">Wheat (Gehun)</div><div class="market-price">₹2,310 <span>/quintal</span></div><div class="market-trend trend-up">↑ +₹60 vs yesterday</div><div class="market-bar"><div class="market-bar-fill" style="width:80%"></div></div></div>
+    </div>
+    <div class="market-best-banner reveal">
+      <div class="mbb-left"><div class="mbb-title">🤖 AI Recommendation for Today</div><div class="mbb-main">Sell at Jaipur Mandi — Save ₹170 per quintal vs local</div><div class="mbb-sub">Predicted price stays high 3 more days · Best window: Today & Tomorrow</div></div>
+      <a href="market.html" class="mbb-cta">View Full Market →</a>
+    </div>
+  </div>
+</section>
+
+<!-- VOICE AI -->
+<section class="voice-section">
+  <div class="voice-inner">
+    <div class="voice-left reveal">
+      <div class="section-tag" style="background:rgba(74,222,128,0.1);border-color:rgba(74,222,128,0.2);color:#4ade80;margin-bottom:16px">☎️ Voice AI Feature · DIFFERENTIATOR</div>
+      <div class="voice-title">No Smartphone? <span>No Problem.</span></div>
+      <p class="voice-sub">Our Voice AI Assistant gives every farmer access to cutting-edge agricultural intelligence — just by making a phone call. Available 24/7 in your own language.</p>
+      <div class="voice-features">
+        <div class="voice-feat-row"><div class="voice-feat-check">✓</div>Crop recommendation by voice — describe your soil</div>
+        <div class="voice-feat-row"><div class="voice-feat-check">✓</div>Disease symptoms? Describe it — AI diagnoses</div>
+        <div class="voice-feat-row"><div class="voice-feat-check">✓</div>Get today's best mandi price for your crop</div>
+        <div class="voice-feat-row"><div class="voice-feat-check">✓</div>Find government schemes you qualify for</div>
+        <div class="voice-feat-row"><div class="voice-feat-check">✓</div>Irrigation advice based on your crop & season</div>
+      </div>
+      <a href="#" class="call-btn"><span class="call-btn-icon">📞</span><span>Call AI Assistant — Dial Toll-Free</span></a>
+      <p style="color:rgba(255,255,255,0.4);font-size:12px;margin-top:12px">Available 24/7 · Free for all farmers · Hindi & Local languages</p>
+    </div>
+    <div class="voice-right reveal reveal-delay-2">
+      <div class="toll-free-box"><span style="font-size:24px">📞</span><div><div class="tf-num">1800-XXX-XXXX</div><div class="tf-tag">Toll-free · Available 24/7 · No internet needed</div></div></div>
+      <div class="lang-card"><div class="lang-flag">🇮🇳</div><div><div class="lang-info-name">Hindi (हिंदी)</div><div class="lang-info-reg">Rajasthan, UP, MP, Haryana</div></div><div class="lang-farmers"><span>2,400+</span>farmers</div></div>
+      <div class="lang-card"><div class="lang-flag">🏔️</div><div><div class="lang-info-name">Rajasthani (राजस्थानी)</div><div class="lang-info-reg">Rajasthan local dialect</div></div><div class="lang-farmers"><span>1,200+</span>farmers</div></div>
+      <div class="lang-card"><div class="lang-flag">🌊</div><div><div class="lang-info-name">Haryanvi (हरयाणवी)</div><div class="lang-info-reg">Haryana region</div></div><div class="lang-farmers"><span>600+</span>farmers</div></div>
+      <div class="lang-card" style="border-style:dashed;opacity:0.6"><div class="lang-flag">➕</div><div><div class="lang-info-name">More languages coming soon</div><div class="lang-info-reg">Gujarati, Punjabi, Marathi...</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- IMPACT -->
+<section class="impact-section">
+  <div class="impact-inner">
+    <div class="text-center">
+      <div class="section-tag" style="margin:0 auto 16px">📊 Proven Impact</div>
+      <div class="section-title text-center reveal">Numbers that <span>speak for themselves</span></div>
+      <p class="section-sub text-center reveal" style="margin:12px auto 0">Real results from 4,200+ farmers using कृषि AI🌾 across Rajasthan</p>
+    </div>
+    <div class="impact-grid">
+      <div class="impact-card impact-card-1 ic1 reveal reveal-delay-1"><div class="impact-icon">💧</div><div class="impact-num">40%</div><div class="impact-label">Water Saved</div><div class="impact-desc">Smart irrigation only runs when AI determines the soil genuinely needs water — saving thousands of liters per season per farm.</div><div class="impact-bar"><div class="impact-bar-fill"></div></div></div>
+      <div class="impact-card impact-card-2 ic2 reveal reveal-delay-2"><div class="impact-icon">💰</div><div class="impact-num">25%</div><div class="impact-label">Profit Increased</div><div class="impact-desc">Selling at the right mandi at the right time, combined with reduced crop loss from early disease detection, boosts net income significantly.</div><div class="impact-bar"><div class="impact-bar-fill"></div></div></div>
+      <div class="impact-card impact-card-3 ic3 reveal reveal-delay-3"><div class="impact-icon">🧪</div><div class="impact-num">30%</div><div class="impact-label">Chemicals Reduced</div><div class="impact-desc">Precision disease detection means farmers apply pesticides only when needed, in the right amount — protecting soil health and reducing costs.</div><div class="impact-bar"><div class="impact-bar-fill"></div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section style="padding:60px 5%;background:#f8faf6">
+  <div style="max-width:1200px;margin:0 auto">
+    <div class="grid-4">
+      <div class="stat-card text-center reveal reveal-delay-1"><div class="stat-num">4,200+</div><div class="stat-label">Farmers onboarded</div></div>
+      <div class="stat-card text-center reveal reveal-delay-2"><div class="stat-num">98%</div><div class="stat-label">Disease detection accuracy</div></div>
+      <div class="stat-card text-center reveal reveal-delay-3"><div class="stat-num">50+</div><div class="stat-label">Mandis connected</div></div>
+      <div class="stat-card text-center reveal reveal-delay-4"><div class="stat-num">12+</div><div class="stat-label">Govt schemes integrated</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<div class="testi-bg">
+  <div class="testi-inner">
+    <div class="text-center mb-24">
+      <div class="section-tag" style="margin:0 auto 14px">Farmer Stories</div>
+      <div class="section-title text-center reveal"><span>Real farmers</span>, real results</div>
+    </div>
+    <div class="testi-grid">
+      <div class="testi-card reveal reveal-delay-1"><div class="testi-stars">★★★★★</div><p class="testi-text">"Pehle poori raat jaag ke pump chalata tha. Ab कृषि  AI🌾 sab automatic kar deta hai. Meri neend bhi aayi aur paani bhi bacha."</p><div class="testi-farmer"><div class="testi-avatar">RK</div><div><div class="testi-name">Ramesh Kumar</div><div class="testi-loc">Ajmer, Rajasthan</div></div></div></div>
+      <div class="testi-card reveal reveal-delay-2"><div class="testi-stars">★★★★★</div><p class="testi-text">"Disease detection feature ne meri 2 bigha wheat ki fasal bachali. Jo spray recommended tha, wohi sahi nikla. AI ne kaam kiya!"</p><div class="testi-farmer"><div class="testi-avatar">SP</div><div><div class="testi-name">Sunita Patel</div><div class="testi-loc">Beawar, Rajasthan</div></div></div></div>
+      <div class="testi-card reveal reveal-delay-3"><div class="testi-stars">★★★★★</div><p class="testi-text">"Market price feature se main sahi time pe Jaipur mandi gaya aur ₹2,400/quintal mila. Pichle saal ₹1,900 mila tha. Bada farak pada!"</p><div class="testi-farmer"><div class="testi-avatar">MG</div><div><div class="testi-name">Mohan Gupta</div><div class="testi-loc">Kishangarh, Rajasthan</div></div></div></div>
+    </div>
+  </div>
+</div>
+
+
+<section style="padding:60px 5%;background:#fff">
+  <div style="max-width:860px;margin:0 auto">
+    <div style="text-align:center;margin-bottom:32px">
+      <div class="section-tag" style="margin:0 auto 12px">❓ Common Questions</div>
+      <div class="section-title text-center">Got <span>questions?</span></div>
+    </div>
+
+    <div class="ac ac-open" data-group="home-faq">
+      <div class="ac-header">
+        <div class="ac-title"><div class="ac-icon-wrap">📡</div>Do I need IoT hardware to use कृषि  AI🌾?</div>
+        <div class="ac-arrow">▼</div>
+      </div>
+      <div class="ac-body">
+        <div class="ac-body-inner" style="font-size:14px;color:var(--text2);line-height:1.8">
+          No! You can use all AI features — disease detection, crop recommendation, market prices, and scheme finder — without any hardware. IoT sensors (ESP32-based kit) are optional and enhance the experience with real-time soil data and automated irrigation. The kit costs ₹1,200–1,800 and is available through our partners.
+        </div>
+      </div>
+    </div>
+
+    <div class="ac" data-group="home-faq">
+      <div class="ac-header">
+        <div class="ac-title"><div class="ac-icon-wrap">🤖</div>How accurate is the AI disease detection?</div>
+        <div class="ac-arrow">▼</div>
+      </div>
+      <div class="ac-body">
+        <div class="ac-body-inner" style="font-size:14px;color:var(--text2);line-height:1.8">
+          Our CNN model is trained on <strong>50,000+ leaf images</strong> covering 38 diseases across wheat, rice, tomato, potato, and more. In validation tests, accuracy reached <strong>98%</strong>. For best results: photograph a single affected leaf in good natural lighting, close-up (15–20cm distance).
+        </div>
+      </div>
+    </div>
+
+    <div class="ac" data-group="home-faq">
+      <div class="ac-header">
+        <div class="ac-title"><div class="ac-icon-wrap">☎️</div>Can farmers without smartphones use this?</div>
+        <div class="ac-arrow">▼</div>
+      </div>
+      <div class="ac-body">
+        <div class="ac-body-inner" style="font-size:14px;color:var(--text2);line-height:1.8">
+          Yes! Our <strong>Voice AI Assistant</strong> is accessible by calling our toll-free number (1800-XXX-XXXX). The AI understands Hindi and Rajasthani, and can answer questions about crop health, mandi prices, government schemes, and irrigation advice — completely free, no internet needed.
+        </div>
+      </div>
+    </div>
+
+    <div class="ac" data-group="home-faq">
+      <div class="ac-header">
+        <div class="ac-title"><div class="ac-icon-wrap">💸</div>Is कृषि  AI🌾 free?</div>
+        <div class="ac-arrow">▼</div>
+      </div>
+      <div class="ac-body">
+        <div class="ac-body-inner" style="font-size:14px;color:var(--text2);line-height:1.8">
+          The core platform — disease detection, crop advisor, market prices, government schemes — is <strong>100% free</strong> for all farmers. The IoT hardware kit is a one-time purchase. We are funded through government grants and social impact investors, ensuring that no farmer is priced out of smart farming technology.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<div class="cta-section">
+  <div class="cta-inner">
+    <div class="section-tag" style="background:rgba(74,222,128,0.15);border-color:rgba(74,222,128,0.3);color:#4ade80;margin:0 auto 20px">Start Today — Free</div>
+    <div class="cta-title">Ready to farm smarter?</div>
+    <p class="cta-sub">Join thousands of farmers already using कृषि AI🌾 to increase yield, reduce waste, and earn more.</p>
+    <div class="cta-btns">
+      <a href="dashboard.html" class="btn btn-green">Open Dashboard →</a>
+      <a href="about.html" class="btn" style="background:rgba(255,255,255,0.1);color:#fff;border:1px solid rgba(255,255,255,0.2)">Meet the Team</a>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div><div class="footer-brand-name">कृषि AI🌾</div><div class="footer-brand-desc">Smart farming ecosystem combining IoT, AI, and market intelligence for every Indian farmer.</div></div>
+      <div><div class="footer-col-title">Platform</div><div class="footer-links"><a href="dashboard.html">Dashboard</a><a href="disease.html">Disease Detection</a><a href="market.html">Market Prices</a><a href="schemes.html">Govt Schemes</a></div></div>
+      <div><div class="footer-col-title">Technology</div><div class="footer-links"><a href="#">IoT & Sensors</a><a href="#">AI Models</a><a href="#">Voice Assistant</a><a href="#">API Docs</a></div></div>
+      <div><div class="footer-col-title">Team</div><div class="footer-links"><a href="about.html">About Us</a><a href="about.html">Alpha Coders</a><a href="#">Contact</a></div></div>
+    </div>
+    <div class="footer-bottom"><div class="footer-copy">© 2026 कृषि AI🌾. Built for Hackathon.</div><div class="footer-team">Alpha Coders — GEC Ajmer 🌱</div></div>
+  </div>
+</footer>
+
+<script>
+// Live Clock
+function updateTime(){document.getElementById('liveTime').textContent=new Date().toLocaleTimeString('en-IN')}
+updateTime();setInterval(updateTime,1000);
+
+// Scroll reveal
+const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')})},{threshold:0.1});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+
+// Hero particles
+const pc=document.getElementById('particles');
+for(let i=0;i<25;i++){
+  const p=document.createElement('div');p.className='particle';
+  p.style.cssText=`left:${Math.random()*100}%;animation-duration:${8+Math.random()*12}s;animation-delay:${Math.random()*10}s;width:${1+Math.random()*3}px;height:${1+Math.random()*3}px;`;
+  pc.appendChild(p);
+}
+
+// ── LIVE sensor data on home page ──────────────
+const BACKEND_IP = '10.109.254.121';  // ← Same as dashboard.html
+const API_HERO   = `http://${BACKEND_IP}:5000/api`;
+const DEVICE_ID  = 'ESP32_FARM_001';
+
+function calcHeroHealth(d) {
+  var s=100;
+  if(d.soilMoisture<30||d.soilMoisture>80) s-=20;
+  if(d.soilPH&&(d.soilPH<5.5||d.soilPH>7.5)) s-=15;
+  if(d.temperature>40) s-=15;
+  if(d.humidity<35) s-=10;
+  if(d.alertLevel==='critical') s-=15;
+  else if(d.alertLevel==='warning') s-=8;
+  return Math.max(s,0);
+}
+
+async function fetchHeroData() {
+  try {
+    const res  = await fetch(API_HERO + '/sensor/latest/' + DEVICE_ID);
+    const json = await res.json();
+    if(!json.success || !json.data) return;
+    const d = json.data;
+
+    // Hero section bar
+    const smEl  = document.getElementById('smVal');
+    const smBar = document.getElementById('smBar');
+    const moist = Math.round(d.soilMoisture);
+    if(smEl)  smEl.textContent = moist + '%';
+    if(smBar) smBar.style.width = moist + '%';
+
+    // Mockup metrics
+    const setId = (id, val) => { const e=document.getElementById(id); if(e) e.textContent=val; };
+    setId('hero-moisture', moist + '%');
+    setId('hero-health',   calcHeroHealth(d) + '/100');
+    setId('hero-humidity', Math.round(d.humidity) + '%');
+    setId('hero-temp',     Math.round(d.temperature) + '°C');
+    setId('hero-ph',       (d.soilPH||6.8).toFixed(1) + ' ✓');
+    setId('hero-hum2',     Math.round(d.humidity) + '%');
+    setId('hero-ec',       (d.soilEC||1.2).toFixed(1));
+    setId('hero-npk',      d.nitrogen || 'Medium');
+
+    // Update alert card with live alerts
+    if(d.alerts && d.alerts.length) {
+      const alertBox = document.querySelector('.mock-alert.ma-warn');
+      if(alertBox) alertBox.textContent = d.alerts[0];
+    }
+    const pumpAlert = document.querySelector('.mock-alert.ma-ok');
+    if(pumpAlert) pumpAlert.textContent = d.pumpStatus ? '💧 Pump running' : '✅ All systems normal';
+
+  } catch(err) { /* silent on home page */ }
+}
+
+fetchHeroData();
+setInterval(fetchHeroData, 10000);
+</script>
+<script src="anim.js"></script>
+</body>
+</html>

@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dashboard — कृषि AI🌾</title>
+<link rel="stylesheet" href="style.css">
+<style>
+body{background:#f2f5f1;padding-top:64px}
+.dash-layout{display:grid;grid-template-columns:240px 1fr;min-height:calc(100vh - 64px)}
+
+/* SIDEBAR */
+.dash-sidebar{background:#0d2818;padding:0;position:sticky;top:64px;height:calc(100vh - 64px);overflow-y:auto;display:flex;flex-direction:column}
+.ds-section{padding:16px 12px}
+.ds-label{font-size:10px;font-weight:600;color:#2d6a3f;letter-spacing:1.2px;text-transform:uppercase;padding:8px 8px 4px;margin-top:4px}
+.ds-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;color:#5a8a6a;font-size:13px;font-weight:500;transition:all 0.15s;margin-bottom:1px;text-decoration:none;position:relative}
+.ds-item:hover{background:rgba(255,255,255,0.07);color:#86efac}
+.ds-item.active{background:rgba(34,197,94,0.18);color:#4ade80}
+.ds-item.active::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:3px;height:18px;background:#22c55e;border-radius:0 2px 2px 0}
+.ds-icon{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.05);flex-shrink:0;font-size:13px}
+.ds-item.active .ds-icon{background:rgba(34,197,94,0.2)}
+.ds-badge{margin-left:auto;padding:1px 7px;border-radius:10px;font-size:10px;font-weight:600}
+.dsb-warn{background:#fef3c7;color:#92400e}
+.dsb-red{background:#fef2f2;color:#991b1b}
+.ds-footer{margin-top:auto;padding:14px 16px;border-top:1px solid rgba(255,255,255,0.07)}
+.ds-user{display:flex;align-items:center;gap:10px}
+.ds-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#22c55e,#16a34a);font-size:12px;font-weight:700;color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ds-uname{font-size:13px;font-weight:600;color:#d1fae5}
+.ds-uloc{font-size:11px;color:#2d6a3f}
+.ds-online{width:8px;height:8px;border-radius:50%;background:#22c55e;margin-left:auto;animation:pulse 2s infinite;flex-shrink:0}
+
+/* MAIN */
+.dash-main{padding:24px;overflow-y:auto}
+.dash-topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px}
+.dash-title{font-size:20px;font-weight:700;color:var(--text);letter-spacing:-0.3px}
+.dash-sub{font-size:13px;color:var(--text3);margin-top:2px}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.weather-chip{display:flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--border);border-radius:20px;padding:7px 14px;font-size:12px;color:var(--text2)}
+.alert-chip{display:flex;align-items:center;gap:6px;background:#fef3c7;border:1px solid #fde68a;border-radius:20px;padding:7px 14px;font-size:12px;color:#92400e;font-weight:600;cursor:pointer}
+.scan-btn{background:var(--g600);color:#fff;border:none;border-radius:10px;padding:8px 18px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;transition:all 0.15s}
+.scan-btn:hover{background:var(--g700)}
+
+/* METRIC CARDS */
+.metrics-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:20px}
+.mcard{background:#fff;border:1px solid var(--border);border-radius:14px;padding:18px;position:relative;overflow:hidden}
+.mcard-accent{position:absolute;top:0;left:0;right:0;height:3px}
+.mcard-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
+.mcard-label{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.4px}
+.mcard-icon{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px}
+.mcard-val{font-size:28px;font-weight:800;color:var(--text);letter-spacing:-0.8px;line-height:1}
+.mcard-unit{font-size:14px;font-weight:400;color:var(--text3);margin-left:2px}
+.mcard-tag{display:inline-flex;align-items:center;gap:3px;margin-top:8px;font-size:11px;font-weight:600;padding:3px 8px;border-radius:12px}
+.spark{display:flex;align-items:flex-end;gap:2px;height:28px;margin-top:10px}
+.spark-b{flex:1;border-radius:2px 2px 0 0;opacity:0.65}
+
+/* SECTIONS */
+.dash-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.dash-grid-3{display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:16px}
+.dcard{background:#fff;border:1px solid var(--border);border-radius:14px;padding:18px}
+.dcard-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.dcard-title{font-size:14px;font-weight:700;color:var(--text)}
+.dcard-badge{font-size:10px;font-weight:600;padding:3px 9px;border-radius:12px}
+.db-live{background:var(--g50);color:var(--g800)}
+.db-warn{background:#fef3c7;color:#78350f}
+.dcard-link{font-size:12px;color:var(--g600);font-weight:600;cursor:pointer;text-decoration:none}
+
+/* SENSOR ROWS */
+.srow{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #f8fafc}
+.srow:last-child{border:none;padding-bottom:0}
+.srow-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.srow-name{font-size:13px;font-weight:600;color:var(--text)}
+.srow-sub{font-size:11px;color:var(--text3);margin-top:1px}
+.srow-right{margin-left:auto;text-align:right}
+.srow-val{font-size:15px;font-weight:700}
+.srow-status{font-size:10px;font-weight:600;padding:2px 8px;border-radius:10px;display:inline-block;margin-top:2px}
+
+/* TOGGLE */
+.irow{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f8fafc}
+.irow:last-child{border:none}
+.irow-name{font-size:13px;font-weight:600;color:var(--text)}
+.irow-zone{font-size:11px;color:var(--text3);margin-top:2px}
+.toggle{width:40px;height:22px;border-radius:11px;border:none;cursor:pointer;position:relative;transition:background 0.2s;flex-shrink:0}
+.toggle.on{background:var(--g500)}
+.toggle.off{background:#e2e8f0}
+.tknob{width:18px;height:18px;border-radius:50%;background:#fff;position:absolute;top:2px;transition:left 0.2s;box-shadow:0 1px 4px rgba(0,0,0,0.2)}
+.toggle.on .tknob{left:20px}
+.toggle.off .tknob{left:2px}
+.tstatus{font-size:11px;font-weight:600}
+.ts-on{color:var(--g600)}
+.ts-off{color:var(--text3)}
+
+/* PROGRESS BARS */
+.pbar-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.pbar-label{font-size:11px;color:var(--text3);width:30px;flex-shrink:0;font-weight:500}
+.pbar-track{flex:1;height:6px;background:#f1f5f9;border-radius:3px;overflow:hidden}
+.pbar-fill{height:100%;border-radius:3px;transition:width 1.2s ease}
+.pbar-val{font-size:11px;color:var(--text3);width:40px;text-align:right;flex-shrink:0}
+
+/* ALERTS */
+.arow{display:flex;gap:10px;padding:9px 11px;border-radius:9px;margin-bottom:7px}
+.arow:last-child{margin-bottom:0}
+.ar-warn{background:#fef3c7}
+.ar-ok{background:#f0fdf4}
+.ar-err{background:#fef2f2}
+.ar-info{background:#eff6ff}
+.ar-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:4px}
+.ar-text{font-size:12px;font-weight:600;color:var(--text)}
+.ar-time{font-size:10px;color:var(--text3);margin-top:2px}
+
+/* CROP GRID */
+.crop-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.cg-card{border:1.5px solid var(--border);border-radius:9px;padding:10px 8px;text-align:center;cursor:pointer;transition:all 0.18s}
+.cg-card:hover{border-color:var(--g300);background:var(--g50)}
+.cg-card.best{border-color:var(--g400);background:var(--g50)}
+.cg-emoji{font-size:22px;margin-bottom:3px}
+.cg-name{font-size:12px;font-weight:600;color:var(--text)}
+.cg-pct{font-size:10px;color:var(--g600);font-weight:600}
+
+/* MARKET */
+.mrow{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid #f8fafc}
+.mrow:last-child{border:none}
+.mr-crop{font-size:13px;font-weight:600;color:var(--text)}
+.mr-loc{font-size:10px;color:var(--text3)}
+.mr-price{font-size:14px;font-weight:700;color:var(--text)}
+.mr-delta{font-size:11px;font-weight:600}
+.d-up{color:var(--g600)}
+.d-dn{color:var(--red)}
+
+.action-btn{width:100%;padding:9px;border:none;border-radius:9px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;transition:all 0.15s;margin-top:12px}
+.ab-green{background:var(--g600);color:#fff}
+.ab-green:hover{background:var(--g700)}
+.ab-outline{background:var(--g50);color:var(--g700);border:1.5px dashed var(--g300)}
+.ab-outline:hover{background:var(--g100)}
+
+.crop-tab{padding:5px 12px;border-radius:20px;border:1.5px solid var(--border);background:#fff;font-size:12px;font-weight:600;color:var(--text2);cursor:pointer;transition:all 0.15s;font-family:inherit}
+.crop-tab:hover{border-color:var(--g300);color:var(--g700)}
+.crop-tab.active{background:var(--g600);color:#fff;border-color:var(--g600)}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 2C7 2 4 5.5 4 9.5c0 3 1.5 5.5 3.8 6.8L10 18l2.2-1.7C14.5 15 16 12.5 16 9.5 16 5.5 13 2 10 2z" fill="rgba(255,255,255,0.95)"/><path d="M10 7v5M8 9l2-2 2 2" stroke="rgba(21,128,61,0.9)" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+      <div class="nav-logo-text">कृषि<span>AI</span>🌾</div>
+    </a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="dashboard.html" class="active">Dashboard</a>
+      <a href="disease.html">Disease AI</a>
+      <a href="market.html">Market</a>
+      <a href="schemes.html">Schemes</a>
+      <a href="about.html">About</a>
+    </div>
+    <a href="dashboard.html" class="btn btn-green" style="font-size:13px;padding:8px 18px;">Open Dashboard →</a>
+  </div>
+</nav>
+
+<div class="dash-layout">
+  <!-- SIDEBAR -->
+  <div class="dash-sidebar">
+    <div class="ds-section">
+      <div class="ds-label">Main</div>
+      <a href="dashboard.html" class="ds-item active"><div class="ds-icon">⊞</div>Dashboard</a>
+      <a href="#" class="ds-item"><div class="ds-icon">📡</div>Field Sensors<span class="ds-badge dsb-warn">4</span></a>
+      <a href="#" class="ds-item"><div class="ds-icon">💧</div>Smart Irrigation</a>
+      <div class="ds-label">AI Tools</div>
+      <a href="disease.html" class="ds-item"><div class="ds-icon">🔬</div>Disease Detection<span class="ds-badge dsb-red">!</span></a>
+      <a href="#" class="ds-item"><div class="ds-icon">🌱</div>Crop Advisor</a>
+      <a href="market.html" class="ds-item"><div class="ds-icon">📈</div>Market Prices</a>
+      <div class="ds-label">Services</div>
+      <a href="schemes.html" class="ds-item"><div class="ds-icon">🏛️</div>Govt Schemes</a>
+      <a href="equipment.html" class="ds-item"><div class="ds-icon">🚜</div>Equipment Rent</a>
+      <a href="pesticide.html" class="ds-item"><div class="ds-icon">✅</div>Verify Pesticide</a>
+    </div>
+    <div class="ds-footer">
+      <div class="ds-user">
+        <div class="ds-avatar">RK</div>
+        <div><div class="ds-uname">Ramesh Kumar</div><div class="ds-uloc">Ajmer, Rajasthan</div></div>
+        <div class="ds-online"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="dash-main">
+    <div class="dash-topbar">
+      <div>
+        <div class="dash-title">Farm Overview</div>
+        <div class="dash-sub">Kharif Season 2026 · Field: 4.2 ha · <span id="last-updated">Connecting...</span></div>
+      </div>
+      <div class="topbar-right">
+        <div class="weather-chip" id="weather-chip">⛅ <span id="w-temp">--°C</span> · <span id="w-cond">Loading...</span> · Ajmer</div>
+        <div class="alert-chip">⚠ 3 Alerts</div>
+        <button class="scan-btn" onclick="showToast({icon:'🔬',title:'Opening Disease Scanner',sub:'AI model loading...',type:'green'});setTimeout(function(){window.location.href='disease.html'},800)">+ Scan Crop</button>
+      </div>
+    </div>
+
+    <!-- METRICS -->
+    <div class="metrics-row">
+      <div class="mcard anim-fade-up anim-delay-1 reveal-scale">
+        <div class="mcard-accent" style="background:linear-gradient(90deg,#f59e0b,#fbbf24)"></div>
+        <div class="mcard-top">
+          <div class="mcard-label">Soil Moisture</div>
+          <div class="mcard-icon" style="background:#fef3c7">💧</div>
+        </div>
+        <div><span class="mcard-val" id="mc-moisture">42</span><span class="mcard-unit">%</span></div>
+        <span class="mcard-tag badge-amber" id="mt-moisture">↓ Below optimal</span>
+        <div class="spark" id="sp1"></div>
+      </div>
+      <div class="mcard anim-fade-up anim-delay-2 reveal-scale">
+        <div class="mcard-accent" style="background:linear-gradient(90deg,#22c55e,#4ade80)"></div>
+        <div class="mcard-top">
+          <div class="mcard-label">Crop Health</div>
+          <div class="mcard-icon" style="background:#f0fdf4">🌿</div>
+        </div>
+        <div><span class="mcard-val" id="mc-health">78</span><span class="mcard-unit">/100</span></div>
+        <span class="mcard-tag badge-green" id="mt-health">↑ Good condition</span>
+        <div class="spark" id="sp2"></div>
+      </div>
+      <div class="mcard anim-fade-up anim-delay-3 reveal-scale">
+        <div class="mcard-accent" style="background:linear-gradient(90deg,#3b82f6,#60a5fa)"></div>
+        <div class="mcard-top">
+          <div class="mcard-label">Water Used Today</div>
+          <div class="mcard-icon" style="background:#eff6ff">🪣</div>
+        </div>
+        <div><span class="mcard-val" id="mc-humidity">--</span><span class="mcard-unit">%</span></div>
+        <span class="mcard-tag badge-blue" id="mt-humidity">Relative humidity</span>
+        <div class="spark" id="sp3"></div>
+      </div>
+      <div class="mcard anim-fade-up anim-delay-4 reveal-scale">
+        <div class="mcard-accent" style="background:linear-gradient(90deg,#8b5cf6,#a78bfa)"></div>
+        <div class="mcard-top">
+          <div class="mcard-label">Temperature</div>
+          <div class="mcard-icon" style="background:#f5f3ff">🌡️</div>
+        </div>
+        <div><span class="mcard-val" id="mc-temp">34</span><span class="mcard-unit">°C</span></div>
+        <span class="mcard-tag badge-amber" id="mt-temp">⚠ High — monitor</span>
+        <div class="spark" id="sp4"></div>
+      </div>
+    </div>
+
+    <!-- ROW 1 -->
+    <div class="dash-grid-2 stagger-children">
+      <div class="dcard">
+        <div class="dcard-head">
+          <span class="dcard-title">Live Sensor Readings</span>
+          <span class="dcard-badge db-live" style="display:flex;align-items:center;gap:5px"><span class="live-ring" style="width:6px;height:6px;border-radius:50%;background:#22c55e;box-shadow:0 0 0 0 rgba(34,197,94,0.5);animation:pingRing 1.5s infinite"></span>Live</span>
+        </div>
+        <div class="srow" id="row-moisture">
+          <div class="srow-icon" style="background:#fef3c7">💧</div>
+          <div><div class="srow-name">Soil Moisture</div><div class="srow-sub">Field A — North zone</div></div>
+          <div class="srow-right"><div class="srow-val" style="color:#d97706">--</div><span class="srow-status" style="background:#fef3c7;color:#92400e">...</span></div>
+        </div>
+        <div class="srow" id="row-temp">
+          <div class="srow-icon" style="background:#fef2f2">🌡️</div>
+          <div><div class="srow-name">Temperature</div><div class="srow-sub">Ambient air</div></div>
+          <div class="srow-right"><div class="srow-val" style="color:#dc2626">--</div><span class="srow-status" style="background:#fef2f2;color:#991b1b">...</span></div>
+        </div>
+        <div class="srow" id="row-ph">
+          <div class="srow-icon" style="background:#f0fdf4">🧪</div>
+          <div><div class="srow-name">Soil pH</div><div class="srow-sub">Nutrient balance</div></div>
+          <div class="srow-right"><div class="srow-val" style="color:#16a34a">--</div><span class="srow-status" style="background:#f0fdf4;color:#15803d">...</span></div>
+        </div>
+        <div class="srow" id="row-humidity">
+          <div class="srow-icon" style="background:#eff6ff">🌬️</div>
+          <div><div class="srow-name">Humidity</div><div class="srow-sub">Relative humidity</div></div>
+          <div class="srow-right"><div class="srow-val" style="color:#2563eb">--</div><span class="srow-status" style="background:#eff6ff;color:#1d4ed8">...</span></div>
+        </div>
+      </div>
+
+      <div class="dcard">
+        <div class="dcard-head">
+          <span class="dcard-title">Smart Irrigation Control</span>
+          <a href="#" class="dcard-link">Schedule →</a>
+        </div>
+        <div class="irow">
+          <div><div class="irow-name">Pump A — Zone 1</div><div class="irow-zone">Wheat field · 1.8 ha</div></div>
+          <div style="display:flex;align-items:center;gap:6px">
+            <span class="tstatus ts-on" id="s1">Running</span>
+            <button class="toggle on" id="t1"><div class="tknob"></div></button>
+            <button id="auto-btn-1" onclick="setAutoMode('Zone-1','auto-btn-1','s1','t1')" style="padding:3px 9px;border-radius:20px;border:1.5px solid #22c55e;background:#f0fdf4;color:#15803d;font-size:10px;font-weight:700;cursor:pointer;font-family:inherit;transition:all 0.15s" title="ESP32 ko Auto mode mein daalo">⚡ Auto</button>
+          </div>
+        </div>
+        <div class="irow">
+          <div><div class="irow-name">Pump B — Zone 2</div><div class="irow-zone">Vegetable patch · 0.9 ha</div></div>
+          <div style="display:flex;align-items:center;gap:6px">
+            <span class="tstatus ts-off" id="s2">Off</span>
+            <button class="toggle off" id="t2"><div class="tknob"></div></button>
+            <button id="auto-btn-2" onclick="setAutoMode('Zone-2','auto-btn-2','s2','t2')" style="padding:3px 9px;border-radius:20px;border:1.5px solid #22c55e;background:#f0fdf4;color:#15803d;font-size:10px;font-weight:700;cursor:pointer;font-family:inherit;transition:all 0.15s" title="ESP32 ko Auto mode mein daalo">⚡ Auto</button>
+          </div>
+        </div>
+        <div class="irow">
+          <div><div class="irow-name">Drip System — Zone 3</div><div class="irow-zone">Orchard · 1.5 ha</div></div>
+          <div style="display:flex;align-items:center;gap:6px">
+            <span class="tstatus ts-on" id="s3">Auto</span>
+            <button class="toggle on" id="t3"><div class="tknob"></div></button>
+            <button id="auto-btn-3" onclick="setAutoMode('Zone-3','auto-btn-3','s3','t3')" style="padding:3px 9px;border-radius:20px;border:1.5px solid #22c55e;background:#f0fdf4;color:#15803d;font-size:10px;font-weight:700;cursor:pointer;font-family:inherit;transition:all 0.15s" title="ESP32 ko Auto mode mein daalo">⚡ Auto</button>
+          </div>
+        </div>
+        <div style="margin-top:14px;padding-top:14px;border-top:1px solid #f8fafc">
+          <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px">Water Usage — This Week</div>
+          <div class="pbar-row"><div class="pbar-label">Mon</div><div class="pbar-track"><div class="pbar-fill" style="width:85%;background:var(--g400)"></div></div><div class="pbar-val">1,400L</div></div>
+          <div class="pbar-row"><div class="pbar-label">Tue</div><div class="pbar-track"><div class="pbar-fill" style="width:68%;background:var(--g400)"></div></div><div class="pbar-val">1,140L</div></div>
+          <div class="pbar-row"><div class="pbar-label">Wed</div><div class="pbar-track"><div class="pbar-fill" style="width:74%;background:var(--g300)"></div></div><div class="pbar-val">1,240L</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EQUIPMENT SHARING CARD ROW -->
+    <div class="dash-grid-2" style="margin-bottom:16px">
+      <div class="dcard">
+        <div class="dcard-head">
+          <span class="dcard-title">🚜 Equipment Sharing</span>
+          <a href="equipment.html" class="dcard-link">See all listed equipment →</a>
+        </div>
+        <div class="srow">
+          <div class="srow-icon" style="background:#eff6ff">🚜</div>
+          <div><div class="srow-name">John Deere 5050D Tractor</div><div class="srow-sub">Ajmer · ₹1,200/day · 8h/day</div></div>
+          <div class="srow-right"><button class="action-btn ab-outline" style="font-size:11px;padding:5px 10px;">Request</button></div>
+        </div>
+        <div class="srow">
+          <div class="srow-icon" style="background:#fef3c7">🔧</div>
+          <div><div class="srow-name">Rotavator (4 ft)</div><div class="srow-sub">Beawar · ₹650/day</div></div>
+          <div class="srow-right"><button class="action-btn ab-outline" style="font-size:11px;padding:5px 10px;">Request</button></div>
+        </div>
+        <div class="srow">
+          <div class="srow-icon" style="background:#f0fdf4">💧</div>
+          <div><div class="srow-name">Drip Kit (500 m)</div><div class="srow-sub">Kishangarh · ₹450/day</div></div>
+          <div class="srow-right"><button class="action-btn ab-outline" style="font-size:11px;padding:5px 10px;">Request</button></div>
+        </div>
+        <button class="action-btn ab-green" onclick="openEquipmentForm()" style="margin-top:10px">Share your equipment</button>
+      </div>
+    </div>
+
+    <!-- ROW 2 -->
+    <div class="dash-grid-3 stagger-children">
+      <div class="dcard">
+        <div class="dcard-head">
+          <span class="dcard-title">Alerts & Activity</span>
+          <span class="dcard-badge db-warn">3 new</span>
+        </div>
+        <div class="arow ar-warn"><div class="ar-dot" style="background:#f59e0b"></div><div><div class="ar-text">Low moisture in Zone 1 — pump activated</div><div class="ar-time">Today, 10:42 AM</div></div></div>
+        <div class="arow ar-err"><div class="ar-dot" style="background:#ef4444"></div><div><div class="ar-text">Pest risk: aphid outbreak nearby — check leaves</div><div class="ar-time">Today, 9:15 AM</div></div></div>
+        <div class="arow ar-ok"><div class="ar-dot" style="background:#22c55e"></div><div><div class="ar-text">Wheat scan complete — no disease detected ✓</div><div class="ar-time">Today, 8:00 AM</div></div></div>
+        <div class="arow ar-info"><div class="ar-dot" style="background:#3b82f6"></div><div><div class="ar-text">PM Kisan subsidy update available</div><div class="ar-time">Yesterday, 6:30 PM</div></div></div>
+        <button class="action-btn ab-outline" onclick="showToast({icon:'🔬',title:'Opening Disease Scanner',sub:'AI model loading...',type:'green'});setTimeout(function(){window.location.href='disease.html'},800)">🔬 Scan crop for disease →</button>
+      </div>
+
+      <div class="dcard">
+        <div class="dcard-head">
+          <span class="dcard-title">AI Crop Advisor</span>
+          <a href="#" class="dcard-link">Soil report →</a>
+        </div>
+        <div style="font-size:11px;color:var(--text3);margin-bottom:10px">Based on soil pH 6.8, Ajmer climate</div>
+        <div class="crop-grid">
+          <div class="cg-card best"><div class="cg-emoji">🌾</div><div class="cg-name">Wheat</div><div class="cg-pct">94%</div></div>
+          <div class="cg-card"><div class="cg-emoji">🌽</div><div class="cg-name">Maize</div><div class="cg-pct">81%</div></div>
+          <div class="cg-card"><div class="cg-emoji">🫘</div><div class="cg-name">Soybean</div><div class="cg-pct">76%</div></div>
+          <div class="cg-card"><div class="cg-emoji">🧅</div><div class="cg-name">Onion</div><div class="cg-pct">70%</div></div>
+          <div class="cg-card"><div class="cg-emoji">🍅</div><div class="cg-name">Tomato</div><div class="cg-pct">65%</div></div>
+          <div class="cg-card"><div class="cg-emoji">🥜</div><div class="cg-name">Peanut</div><div class="cg-pct">60%</div></div>
+        </div>
+      </div>
+
+      <div class="dcard">
+        <div class="dcard-head">
+          <span class="dcard-title">Market Prices</span>
+          <a href="market.html" class="dcard-link">All →</a>
+        </div>
+        <div class="mrow"><div><div class="mr-crop">Wheat</div><div class="mr-loc">Ajmer Mandi</div></div><div style="text-align:right"><div class="mr-price">₹2,180/q</div><div class="mr-delta d-up">↑ +₹40</div></div></div>
+        <div class="mrow"><div><div class="mr-crop">Maize</div><div class="mr-loc">Jaipur Mandi</div></div><div style="text-align:right"><div class="mr-price">₹1,920/q</div><div class="mr-delta d-dn">↓ -₹25</div></div></div>
+        <div class="mrow"><div><div class="mr-crop">Onion</div><div class="mr-loc">Kishangarh</div></div><div style="text-align:right"><div class="mr-price">₹1,450/q</div><div class="mr-delta d-up">↑ +₹80</div></div></div>
+        <div class="mrow"><div><div class="mr-crop">Tomato</div><div class="mr-loc">Beawar</div></div><div style="text-align:right"><div class="mr-price">₹980/q</div><div class="mr-delta d-dn">↓ -₹15</div></div></div>
+        <button class="action-btn ab-green" onclick="window.location.href='market.html'">AI Price Forecast →</button>
+      </div>
+    </div>
+  
+
+    <!-- WEATHER + CROP STATUS ROW -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px">
+
+      <!-- WEATHER CARD -->
+      <div class="dcard">
+        <div class="dcard-head">
+          <span class="dcard-title">🌤️ Live Weather — Ajmer</span>
+          <span style="font-size:10px;color:var(--text3);font-weight:500">Open-Meteo API</span>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px">
+          <div style="text-align:center;padding:10px 6px;background:#f0fdf4;border-radius:10px">
+            <div style="font-size:20px;margin-bottom:4px">🌡️</div>
+            <div style="font-size:17px;font-weight:700;color:#0f172a" id="wc-temp">--</div>
+            <div style="font-size:10px;color:#64748b">Temp</div>
+          </div>
+          <div style="text-align:center;padding:10px 6px;background:#eff6ff;border-radius:10px">
+            <div style="font-size:20px;margin-bottom:4px">💧</div>
+            <div style="font-size:17px;font-weight:700;color:#0f172a" id="wc-hum">--</div>
+            <div style="font-size:10px;color:#64748b">Humidity</div>
+          </div>
+          <div style="text-align:center;padding:10px 6px;background:#fef3c7;border-radius:10px">
+            <div style="font-size:20px;margin-bottom:4px">🌧️</div>
+            <div style="font-size:17px;font-weight:700;color:#0f172a" id="wc-rain">--</div>
+            <div style="font-size:10px;color:#64748b">Rain mm</div>
+          </div>
+          <div style="text-align:center;padding:10px 6px;background:#f5f3ff;border-radius:10px">
+            <div style="font-size:20px;margin-bottom:4px">🌥️</div>
+            <div style="font-size:14px;font-weight:600;color:#0f172a" id="wc-cond">--</div>
+            <div style="font-size:10px;color:#64748b">Condition</div>
+          </div>
+        </div>
+        <div id="rain-alert" style="display:none;padding:8px 12px;background:#fef2f2;border-radius:8px;font-size:12px;font-weight:600;color:#991b1b;border-left:3px solid #ef4444">
+          🌧️ Rain expected — Auto irrigation paused
+        </div>
+        <div id="weather-ok" style="padding:8px 12px;background:#f0fdf4;border-radius:8px;font-size:12px;font-weight:600;color:#15803d;border-left:3px solid #22c55e">
+          ✅ Good weather for farming today
+        </div>
+      </div>
+
+      <!-- CROP STATUS CARD -->
+      <div class="dcard">
+        <div class="dcard-head">
+          <span class="dcard-title">🌾 Crop Status</span>
+          <span id="crop-mode-badge" style="font-size:10px;font-weight:600;padding:3px 9px;border-radius:12px;background:#f0fdf4;color:#15803d">AUTO Mode</span>
+        </div>
+        <!-- Crop selector tabs -->
+        <div style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap">
+          <button class="crop-tab active" data-crop="Wheat"  onclick="selectCrop(this,'Wheat')">🌾 Wheat</button>
+          <button class="crop-tab"        data-crop="Maize"  onclick="selectCrop(this,'Maize')">🌽 Maize</button>
+          <button class="crop-tab"        data-crop="Onion"  onclick="selectCrop(this,'Onion')">🧅 Onion</button>
+          <button class="crop-tab"        data-crop="Tomato" onclick="selectCrop(this,'Tomato')">🍅 Tomato</button>
+        </div>
+        <!-- Moisture vs threshold bar -->
+        <div style="margin-bottom:10px">
+          <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-bottom:4px">
+            <span>Soil Moisture</span>
+            <span id="crop-moisture-label">-- / 35–65%</span>
+          </div>
+          <div style="height:8px;background:#f1f5f9;border-radius:4px;overflow:visible;position:relative">
+            <!-- Threshold zone indicator -->
+            <div id="crop-thresh-zone" style="position:absolute;top:0;height:100%;background:rgba(34,197,94,0.15);border-radius:4px"></div>
+            <!-- Actual moisture fill -->
+            <div id="crop-moist-bar" style="height:100%;border-radius:4px;background:#22c55e;transition:width 1s ease;position:relative;z-index:1"></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text3);margin-top:2px">
+            <span>0%</span><span id="crop-min-label">35% min</span><span id="crop-max-label">65% max</span><span>100%</span>
+          </div>
+        </div>
+        <!-- Status rows -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+          <div style="padding:7px 10px;border-radius:8px;background:#f8faf6;border:1px solid #e2e8f0">
+            <div style="font-size:10px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:0.4px">Temp Status</div>
+            <div style="font-size:13px;font-weight:700;color:var(--text);margin-top:2px" id="crop-temp-status">--</div>
+          </div>
+          <div style="padding:7px 10px;border-radius:8px;background:#f8faf6;border:1px solid #e2e8f0">
+            <div style="font-size:10px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:0.4px">Humidity</div>
+            <div style="font-size:13px;font-weight:700;color:var(--text);margin-top:2px" id="crop-hum-status">--</div>
+          </div>
+          <div style="padding:7px 10px;border-radius:8px;background:#f8faf6;border:1px solid #e2e8f0">
+            <div style="font-size:10px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:0.4px">Season</div>
+            <div style="font-size:11px;font-weight:600;color:var(--text);margin-top:2px" id="crop-season">--</div>
+          </div>
+          <div style="padding:7px 10px;border-radius:8px;background:#f8faf6;border:1px solid #e2e8f0">
+            <div style="font-size:10px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:0.4px">AI Decision</div>
+            <div style="font-size:11px;font-weight:600;color:var(--g600);margin-top:2px" id="ai-decision">--</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EQUIPMENT SHARING SECTION -->
+    <div class="dash-grid-2" style="margin-top:16px;">
+      <div class="dcard">
+        <div class="dcard-head">
+          <span class="dcard-title">🚜 Equipment Sharing</span>
+          <a href="equipment.html" class="dcard-link">See all gear →</a>
+        </div>
+        <div style="font-size:12px;color:var(--text3);margin-bottom:10px">Lend or borrow farm equipment in your area. Update availability in real-time to reduce idle time.</div>
+
+        <div class="srow">
+          <div class="srow-icon" style="background:#eff6ff">🧑‍🌾</div>
+          <div><div class="srow-name">Tractor John Deere 5050D</div><div class="srow-sub">Ajmer · 25 hp · 8 hrs/day · ₹1,200</div></div>
+          <div class="srow-right"><button class="action-btn ab-outline" style="font-size:11px;padding:5px 10px;">Request</button></div>
+        </div>
+        <div class="srow">
+          <div class="srow-icon" style="background:#fef3c7">🚜</div>
+          <div><div class="srow-name">Rotavator Mounted</div><div class="srow-sub">Beawar · 4 ft · 12 hrs/day · ₹650</div></div>
+          <div class="srow-right"><button class="action-btn ab-outline" style="font-size:11px;padding:5px 10px;">Request</button></div>
+        </div>
+        <div class="srow">
+          <div class="srow-icon" style="background:#f0fdf4">💧</div>
+          <div><div class="srow-name">Drip Kit (500m)</div><div class="srow-sub">Kishangarh · ₹450/day</div></div>
+          <div class="srow-right"><button class="action-btn ab-outline" style="font-size:11px;padding:5px 10px;">Request</button></div>
+        </div>
+
+        <button class="action-btn ab-green" onclick="alert('Equipment Sharing form will open.');">Share your equipment</button>
+      </div>
+
+      <div class="dcard">
+        <div class="dcard-head">
+          <span class="dcard-title">📈 Market Prices</span>
+          <a href="market.html" class="dcard-link">All →</a>
+        </div>
+        <div class="mrow"><div><div class="mr-crop">Wheat</div><div class="mr-loc">Ajmer Mandi</div></div><div style="text-align:right"><div class="mr-price">₹2,180/q</div><div class="mr-delta d-up">↑ +₹40</div></div></div>
+        <div class="mrow"><div><div class="mr-crop">Maize</div><div class="mr-loc">Jaipur Mandi</div></div><div style="text-align:right"><div class="mr-price">₹1,920/q</div><div class="mr-delta d-dn">↓ -₹25</div></div></div>
+        <div class="mrow"><div><div class="mr-crop">Onion</div><div class="mr-loc">Kishangarh</div></div><div style="text-align:right"><div class="mr-price">₹1,450/q</div><div class="mr-delta d-up">↑ +₹80</div></div></div>
+        <div class="mrow"><div><div class="mr-crop">Tomato</div><div class="mr-loc">Beawar</div></div><div style="text-align:right"><div class="mr-price">₹980/q</div><div class="mr-delta d-dn">↓ -₹15</div></div></div>
+        <button class="action-btn ab-green" onclick="window.location.href='market.html'">AI Price Forecast →</button>
+      </div>
+    </div>
+
+    <!-- AI INSIGHTS ACCORDION -->
+    <div style="margin-top:16px">
+      <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:12px;display:flex;align-items:center;gap:8px">
+        <span>🤖</span> AI Insights &amp; Recommendations
+        <span style="font-size:11px;font-weight:500;color:var(--text3);margin-left:4px">— Click to expand</span>
+      </div>
+
+      <div class="ac ac-open" data-group="insights">
+        <div class="ac-header">
+          <div class="ac-title"><div class="ac-icon-wrap">💧</div>Irrigation Advisory<span class="ac-meta" style="margin-left:8px">Confidence 94%</span></div>
+          <div class="ac-arrow">▼</div>
+        </div>
+        <div class="ac-body">
+          <div class="ac-body-inner">
+            <div style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:10px">Soil moisture at <strong>32%</strong> — critically low. Start irrigation on Zone 1 immediately. Estimated <strong>45 minutes</strong> at current flow rate will restore optimal levels to 65%+.</div>
+            <div style="display:flex;gap:8px">
+              <button class="action-btn ab-green" style="width:auto;padding:7px 16px;margin-top:0" onclick="showToast({icon:'💧',title:'Irrigation started',sub:'Pump A — Zone 1 activated',type:'green'})">▶ Start Pump A</button>
+              <button class="action-btn ab-outline" style="width:auto;padding:7px 16px;margin-top:0">Schedule for 6 PM</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ac" data-group="insights">
+        <div class="ac-header">
+          <div class="ac-title"><div class="ac-icon-wrap">🐛</div>Pest Risk Alert<span class="ac-meta" style="margin-left:8px">Confidence 88%</span></div>
+          <div class="ac-arrow">▼</div>
+        </div>
+        <div class="ac-body">
+          <div class="ac-body-inner">
+            <div style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:10px">Aphid infestation detected in nearby farms (2km radius). Risk of spread to Zone 3 within <strong>48 hours</strong>. Preventive spraying recommended before temperatures drop.</div>
+            <div style="background:#fef3c7;border:1px solid #fde68a;border-radius:8px;padding:10px 12px;font-size:12px;color:#78350f;margin-bottom:10px">⚠ Spray in the evening. Avoid direct sunlight. Use <strong>Imidacloprid 17.8% SL @ 0.5ml/L</strong></div>
+            <button class="action-btn ab-outline" style="width:auto;padding:7px 16px;margin-top:0" onclick="showToast({icon:'🐛',title:'Alert noted',sub:'Disease scan scheduled for tomorrow',type:'amber'})">📋 Add to task list</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="ac" data-group="insights">
+        <div class="ac-header">
+          <div class="ac-title"><div class="ac-icon-wrap">🌱</div>Crop Health Summary<span class="ac-meta" style="margin-left:8px" id="health-score-meta">Score --/100</span></div>
+          <div class="ac-arrow">▼</div>
+        </div>
+        <div class="ac-body">
+          <div class="ac-body-inner">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
+              <div style="background:#f0fdf4;border-radius:8px;padding:10px 12px"><div style="font-size:10px;color:#64748b;font-weight:600;text-transform:uppercase;letter-spacing:0.4px">Nitrogen</div><div style="font-size:15px;font-weight:700;color:#15803d;margin-top:2px" id="npk-n">--</div></div>
+              <div style="background:#f0fdf4;border-radius:8px;padding:10px 12px"><div style="font-size:10px;color:#64748b;font-weight:600;text-transform:uppercase;letter-spacing:0.4px">Phosphorus</div><div style="font-size:15px;font-weight:700;color:#15803d;margin-top:2px" id="npk-p">--</div></div>
+              <div style="background:#fef3c7;border-radius:8px;padding:10px 12px"><div style="font-size:10px;color:#64748b;font-weight:600;text-transform:uppercase;letter-spacing:0.4px">Potassium</div><div style="font-size:15px;font-weight:700;color:#d97706;margin-top:2px" id="npk-k">--</div></div>
+              <div style="background:#f0fdf4;border-radius:8px;padding:10px 12px"><div style="font-size:10px;color:#64748b;font-weight:600;text-transform:uppercase;letter-spacing:0.4px">Soil pH</div><div style="font-size:15px;font-weight:700;color:#15803d;margin-top:2px" id="npk-ph">--</div></div>
+            </div>
+            <div style="font-size:12px;color:#64748b">💡 <strong>AI Tip:</strong> Apply MOP (Muriate of Potash) @ 20 kg/acre to boost potassium before next watering cycle.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ac" data-group="insights">
+        <div class="ac-header">
+          <div class="ac-title"><div class="ac-icon-wrap">📈</div>Market Opportunity<span class="ac-meta" style="margin-left:8px">AI price forecast</span></div>
+          <div class="ac-arrow">▼</div>
+        </div>
+        <div class="ac-body">
+          <div class="ac-body-inner">
+            <div style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:10px">Wheat prices predicted to <strong>rise ₹80–120/quintal</strong> over next 5 days due to reduced supply from Punjab. Best window: sell <strong>Thu–Sat this week</strong> at Jaipur Mandi.</div>
+            <a href="market.html" class="action-btn ab-green" style="display:inline-flex;width:auto;padding:7px 16px;margin-top:0;text-decoration:none">View market prices →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════
+// कृषि AI🌾 — Full Dashboard JS
+// Sensor data + Weather API + Crop Thresholds + Pump
+// ═══════════════════════════════════════════════════
+
+// ⚙️ AUTO-DETECT backend URL from current page location
+// If serving dashboard from same machine as backend (via Live Server / file://):
+//   → change BACKEND_IP to your PC's IP (same as SERVER_URL in ESP32)
+// If using ngrok: change to 'https://xxxx.ngrok.io/api'
+const BACKEND_IP   = '10.109.254.121';   // ← Same IP as ESP32's SERVER_URL
+const BACKEND_PORT = '5000';
+const API_BASE     = `http://${BACKEND_IP}:${BACKEND_PORT}/api`;
+const DEVICE_ID    = 'ESP32_FARM_001';
+const FARM_LAT     = 26.4499;   // Ajmer latitude
+const FARM_LON     = 74.6399;   // Ajmer longitude
+const SENSOR_POLL  = 8000;      // 8s sensor refresh
+const MARKET_POLL  = 60000;     // 1min market refresh
+const WEATHER_POLL = 300000;    // 5min weather refresh
+
+// ── Crop profiles (match ESP32 firmware) ──────────
+const CROP_PROFILES = {
+  'Wheat':  { min:35, max:65, idealTemp:20, maxTemp:35, minHum:40, maxHum:75, season:'Rabi (Nov–Apr)'   },
+  'Maize':  { min:40, max:70, idealTemp:25, maxTemp:38, minHum:50, maxHum:80, season:'Kharif (Jun–Oct)' },
+  'Onion':  { min:45, max:75, idealTemp:22, maxTemp:35, minHum:55, maxHum:80, season:'Rabi (Oct–Mar)'   },
+  'Tomato': { min:50, max:80, idealTemp:24, maxTemp:36, minHum:60, maxHum:85, season:'Year-round'       },
+};
+let activeCrop = 'Wheat';
+let latestSensorData = null;
+let latestWeather = null;
+
+// ── Sparkline builder ──────────────────────────────
+function mkSpark(id, vals, col) {
+  var el = document.getElementById(id); if(!el) return;
+  el.innerHTML = '';
+  var mx = Math.max(...vals, 1);
+  vals.forEach(v => {
+    var b = document.createElement('div'); b.className = 'spark-b';
+    b.style.cssText = 'flex:1;border-radius:2px 2px 0 0;background:'+col+';height:'+Math.round(v/mx*100)+'%;transition:height 0.8s ease';
+    el.appendChild(b);
+  });
+}
+
+// ── Toast helper ───────────────────────────────────
+function apiToast(msg, type) {
+  if(typeof showToast === 'function') showToast({icon:type==='ok'?'✅':type==='warn'?'⚠️':'❌', title:msg, sub:'', type:type==='ok'?'green':'warn'});
+}
+
+// ── DOM helpers ────────────────────────────────────
+function setText(id, v) { var e=document.getElementById(id); if(e) e.textContent=v; }
+function setHTML(id, v) { var e=document.getElementById(id); if(e) e.innerHTML=v; }
+function setStyle(id, prop, val) { var e=document.getElementById(id); if(e) e.style[prop]=val; }
+function setClass(id, cls) { var e=document.getElementById(id); if(e) e.className=cls; }
+
+function openEquipmentForm() {
+  apiToast('Redirecting to equipment form...', 'ok');
+  setTimeout(function(){ window.location.href = 'equipment.html#share-equipment'; }, 250);
+}
+
+function setSensorRow(rowId, value, color, statusText, bgColor, textColor) {
+  var row = document.getElementById(rowId); if(!row) return;
+  var v = row.querySelector('.srow-val'), s = row.querySelector('.srow-status');
+  if(v) { v.textContent = value; v.style.color = color; }
+  if(s) { s.textContent = statusText; s.style.background = bgColor; s.style.color = textColor; }
+}
+
+// ── Status calculators ─────────────────────────────
+function moistureStatus(v) {
+  if(v < 30) return {color:'#d97706',text:'Low',bg:'#fef3c7',tc:'#92400e',tag:'↓ Below optimal',cls:'badge-amber'};
+  if(v > 80) return {color:'#2563eb',text:'High',bg:'#eff6ff',tc:'#1d4ed8',tag:'↑ Above optimal',cls:'badge-blue'};
+  return {color:'#16a34a',text:'Optimal',bg:'#f0fdf4',tc:'#15803d',tag:'↑ Good level',cls:'badge-green'};
+}
+function tempStatus(v) {
+  if(v > 38) return {color:'#dc2626',text:'High',bg:'#fef2f2',tc:'#991b1b',tag:'⚠ High — monitor',cls:'badge-amber'};
+  if(v < 15) return {color:'#2563eb',text:'Cold',bg:'#eff6ff',tc:'#1d4ed8',tag:'↓ Below normal',cls:'badge-blue'};
+  return {color:'#16a34a',text:'Normal',bg:'#f0fdf4',tc:'#15803d',tag:'↑ Normal',cls:'badge-green'};
+}
+function calcHealth(d) {
+  var s=100;
+  if(d.soilMoisture<30||d.soilMoisture>80) s-=20;
+  if(d.soilPH&&(d.soilPH<5.5||d.soilPH>7.5)) s-=15;
+  if(d.temperature>40) s-=15;
+  if(d.humidity<35)    s-=10;
+  if(d.alertLevel==='critical') s-=15; else if(d.alertLevel==='warning') s-=8;
+  return Math.max(s,0);
+}
+
+// ═══════════════════════════════════════════════════
+// 🌤️  WEATHER — Open-Meteo (FREE, no API key)
+// ═══════════════════════════════════════════════════
+async function fetchWeather() {
+  try {
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${FARM_LAT}&longitude=${FARM_LON}&current=temperature_2m,relative_humidity_2m,precipitation,weather_code&forecast_days=1`;
+    const res  = await fetch(url);
+    const json = await res.json();
+    if(!json.current) return;
+
+    const c = json.current;
+    latestWeather = {
+      temp : c.temperature_2m,
+      hum  : c.relative_humidity_2m,
+      rain : c.precipitation,
+      code : c.weather_code
+    };
+
+    const condMap = {
+      0:'☀️ Clear', 1:'🌤️ Mostly Clear', 2:'⛅ Partly Cloudy', 3:'☁️ Overcast',
+      45:'🌫️ Foggy', 48:'🌫️ Icy Fog', 51:'🌦️ Drizzle', 61:'🌧️ Rain',
+      63:'🌧️ Heavy Rain', 71:'❄️ Snow', 80:'🌦️ Showers', 95:'⛈️ Thunderstorm'
+    };
+    // Find closest code
+    let condText = '🌤️ Clear';
+    const codes = Object.keys(condMap).map(Number).sort((a,b)=>a-b);
+    for(let i=codes.length-1; i>=0; i--) {
+      if(latestWeather.code >= codes[i]) { condText = condMap[codes[i]]; break; }
+    }
+
+    // Update weather topbar chip
+    var chip = document.getElementById('weather-chip');
+    if(chip) chip.innerHTML = condText.split(' ')[0] + ' <span id="w-temp">' + Math.round(c.temperature_2m) + '°C</span> · <span id="w-cond">' + condText.split(' ').slice(1).join(' ') + '</span> · Ajmer';
+
+    // Update weather card
+    setText('wc-temp',  Math.round(c.temperature_2m) + '°C');
+    setText('wc-hum',   Math.round(c.relative_humidity_2m) + '%');
+    setText('wc-rain',  c.precipitation.toFixed(1));
+    setText('wc-cond',  condText.split(' ').slice(1).join(' '));
+
+    // Rain alert
+    var rainAlert = document.getElementById('rain-alert');
+    var weatherOk = document.getElementById('weather-ok');
+    if(c.precipitation > 2.0) {
+      if(rainAlert) rainAlert.style.display = 'block';
+      if(weatherOk) weatherOk.style.display = 'none';
+    } else {
+      if(rainAlert) rainAlert.style.display = 'none';
+      if(weatherOk) weatherOk.style.display = 'block';
+    }
+
+    updateCropPanel();
+  } catch(err) {
+    console.warn('Weather fetch failed:', err.message);
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// 🌾 CROP PANEL UPDATE
+// ═══════════════════════════════════════════════════
+function selectCrop(el, cropName) {
+  document.querySelectorAll('.crop-tab').forEach(b => b.classList.remove('active'));
+  if(el) el.classList.add('active');
+  activeCrop = cropName;
+  updateCropPanel();
+  // Tell backend/ESP32 about crop change so auto irrigation thresholds update
+  sendCropChange(cropName);
+}
+
+async function sendCropChange(cropName) {
+  try {
+    // Send a sensor data update with new crop type so backend stores it
+    // ESP32 will pick up new thresholds on next poll
+    const crop = CROP_PROFILES[cropName];
+    if(!crop) return;
+    await fetch(API_BASE + '/sensor/data', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        deviceId: DEVICE_ID,
+        cropType: cropName,
+        cropMinMoisture: crop.min,
+        cropMaxMoisture: crop.max,
+        cropIdealTemp:   crop.idealTemp,
+        cropSeason:      crop.season,
+        // Pass current sensor values if available
+        soilMoisture: latestSensorData ? latestSensorData.soilMoisture : null,
+        temperature:  latestSensorData ? latestSensorData.temperature  : null,
+        humidity:     latestSensorData ? latestSensorData.humidity     : null,
+        pumpStatus:   latestSensorData ? latestSensorData.pumpStatus   : false,
+      })
+    });
+    console.log('Crop changed to:', cropName, '| Thresholds:', crop.min, '-', crop.max + '%');
+  } catch(err) { console.warn('Crop change send failed:', err.message); }
+}
+
+function updateCropPanel() {
+  const crop = CROP_PROFILES[activeCrop]; if(!crop) return;
+  const moisture = latestSensorData ? latestSensorData.soilMoisture : null;
+  const temp     = latestSensorData ? latestSensorData.temperature  : null;
+  const humidity = latestSensorData ? latestSensorData.humidity     : null;
+
+  // Moisture bar
+  var moistPct = moisture !== null ? moisture : 50;
+  var barEl = document.getElementById('crop-moist-bar');
+  var zoneEl = document.getElementById('crop-thresh-zone');
+  if(barEl) barEl.style.width = Math.min(moistPct, 100) + '%';
+  if(barEl) barEl.style.background = moistPct < crop.min ? '#f59e0b' : moistPct > crop.max ? '#3b82f6' : '#22c55e';
+  if(zoneEl) { zoneEl.style.left = crop.min + '%'; zoneEl.style.width = (crop.max - crop.min) + '%'; }
+
+  setText('crop-moisture-label', (moisture !== null ? moisture.toFixed(1) : '--') + '% / ' + crop.min + '–' + crop.max + '%');
+  setText('crop-min-label', crop.min + '% min');
+  setText('crop-max-label', crop.max + '% max');
+  setText('crop-season', crop.season);
+
+  // Temp status
+  if(temp !== null) {
+    if(temp > crop.maxTemp)         setText('crop-temp-status', '🔴 Too Hot '+temp.toFixed(1)+'°C');
+    else if(temp < crop.idealTemp-5) setText('crop-temp-status', '🔵 Too Cold '+temp.toFixed(1)+'°C');
+    else                             setText('crop-temp-status', '✅ Good '+temp.toFixed(1)+'°C');
+  } else setText('crop-temp-status', '--');
+
+  // Humidity status
+  if(humidity !== null) {
+    if(humidity < crop.minHum)       setText('crop-hum-status', '⚠️ Low '+humidity.toFixed(0)+'%');
+    else if(humidity > crop.maxHum)  setText('crop-hum-status', '💧 High '+humidity.toFixed(0)+'%');
+    else                             setText('crop-hum-status', '✅ Good '+humidity.toFixed(0)+'%');
+  } else setText('crop-hum-status', '--');
+
+  // AI decision
+  var rain = latestWeather ? latestWeather.rain : 0;
+  var decision = '⏳ Monitoring...';
+  if(rain > 2.0)                       decision = '🌧️ Rain expected — skip irrigation';
+  else if(moisture !== null && moisture < crop.min) decision = '💧 Irrigate now! Low moisture';
+  else if(moisture !== null && moisture > crop.max) decision = '✅ Enough water — pump OFF';
+  else if(moisture !== null)            decision = '✅ ' + activeCrop + ' is well-watered';
+  setText('ai-decision', decision);
+}
+
+// ═══════════════════════════════════════════════════
+// 📡 SENSOR DATA from Backend
+// ═══════════════════════════════════════════════════
+async function fetchSensorData() {
+  try {
+    const res  = await fetch(API_BASE + '/sensor/latest/' + DEVICE_ID);
+    const json = await res.json();
+    if(!json.success || !json.data) {
+      setText('last-updated', 'Waiting for ESP32...');
+      return;
+    }
+    // Backend returns: { success: true, data: { soilMoisture, temperature, humidity, pumpStatus, ... } }
+    const d = json.data;
+    latestSensorData = d;
+
+    // Metric cards
+    var ms = moistureStatus(d.soilMoisture);
+    var ts = tempStatus(d.temperature);
+    var health = calcHealth(d);
+
+    var mcm = document.getElementById('mc-moisture');
+    if(mcm) mcm.innerHTML = Math.round(d.soilMoisture) + '<span class="mcard-unit">%</span>';
+    var mtm = document.getElementById('mt-moisture');
+    if(mtm) { mtm.textContent = ms.tag; mtm.className = 'mcard-tag ' + ms.cls; }
+
+    var mch = document.getElementById('mc-health');
+    if(mch) mch.innerHTML = health + '<span class="mcard-unit">/100</span>';
+    var mth = document.getElementById('mt-health');
+    var hCls = health>=80?'badge-green':health>=60?'badge-amber':'badge-red';
+    if(mth) { mth.textContent = health>=80?'↑ Good condition':'↓ Needs attention'; mth.className = 'mcard-tag ' + hCls; }
+
+    var mct = document.getElementById('mc-temp');
+    if(mct) mct.innerHTML = Math.round(d.temperature) + '<span class="mcard-unit">°C</span>';
+    var mtt = document.getElementById('mt-temp');
+    if(mtt) { mtt.textContent = ts.tag; mtt.className = 'mcard-tag ' + ts.cls; }
+
+    // Humidity card (was water-used)
+    var mcH = document.getElementById('mc-humidity');
+    if(mcH) mcH.innerHTML = Math.round(d.humidity) + '<span class="mcard-unit">%</span>';
+    var mtH = document.getElementById('mt-humidity');
+    if(mtH) { mtH.textContent = 'Relative humidity'; }
+
+    // Sensor rows
+    setSensorRow('row-moisture', Math.round(d.soilMoisture)+'%', ms.color, ms.text, ms.bg, ms.tc);
+    setSensorRow('row-temp',     Math.round(d.temperature)+'°C', ts.color, ts.text, '#fef2f2','#991b1b');
+
+    var pHval = d.soilPH || 6.8;
+    var pHok = (pHval>=5.5&&pHval<=7.5);
+    setSensorRow('row-ph', pHval.toFixed(1), pHok?'#16a34a':'#d97706', pHok?'Optimal':'Off-range', pHok?'#f0fdf4':'#fef3c7', pHok?'#15803d':'#92400e');
+
+    var humSt = d.humidity >= 40 && d.humidity <= 85;
+    setSensorRow('row-humidity', Math.round(d.humidity)+'%', '#2563eb', humSt?'Normal':'Low', '#eff6ff','#1d4ed8');
+
+    // Auto-pump toggle (only if not manual)
+    var t1 = document.getElementById('t1'), s1 = document.getElementById('s1');
+    if(t1 && !t1.dataset.manualOverride) {
+      t1.className = 'toggle ' + (d.pumpStatus?'on':'off');
+      if(s1) { s1.textContent=d.pumpStatus?'Running':'Off'; s1.className='tstatus '+(d.pumpStatus?'ts-on':'ts-off'); }
+    }
+
+    // Crop mode badge
+    var badge = document.getElementById('crop-mode-badge');
+    if(badge) { badge.textContent = d.manualMode ? '🖱️ Manual' : '🤖 AUTO Mode'; badge.style.background = d.manualMode ? '#fef3c7' : '#f0fdf4'; badge.style.color = d.manualMode ? '#92400e' : '#15803d'; }
+
+    // Update active crop from ESP32 if available
+    if(d.cropType && CROP_PROFILES[d.cropType]) {
+      if(d.cropType !== activeCrop) selectCrop(null, d.cropType);
+    }
+
+    // Last updated
+    setText('last-updated', 'Updated ' + new Date(d.timestamp).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}));
+
+    updateCropPanel();
+    updateAIInsights(d);
+  } catch(err) { console.warn('Sensor fetch:', err.message); }
+}
+
+// ── LIVE AI INSIGHTS UPDATE ────────────────────────
+function updateAIInsights(d) {
+  const crop    = CROP_PROFILES[activeCrop] || CROP_PROFILES['Wheat'];
+  const moist   = d.soilMoisture;
+  const temp    = d.temperature;
+  const health  = calcHealth(d);
+  const pump    = d.pumpStatus;
+  const rain    = latestWeather ? latestWeather.rain : 0;
+
+  // ── 1. Irrigation Advisory ─────────────────────
+  var irrConf, irrText;
+  if(rain > 2.0) {
+    irrConf = '🌧️ Rain expected';
+    irrText = `Rain of <strong>${rain.toFixed(1)}mm</strong> expected — auto irrigation paused. No manual watering needed today.`;
+  } else if(moist < crop.min) {
+    irrConf = `Confidence ${Math.min(99, Math.round(90 + (crop.min - moist)))}%`;
+    irrText = `Soil moisture at <strong>${moist.toFixed(1)}%</strong> — below <strong>${crop.min}%</strong> needed for ${activeCrop}. 
+      ${pump ? '✅ Pump A is already running.' : '⚠️ Start irrigation now!'} 
+      Target: reach <strong>${crop.max}%</strong> moisture.`;
+  } else if(moist > crop.max) {
+    irrConf = 'No irrigation needed';
+    irrText = `Soil moisture <strong>${moist.toFixed(1)}%</strong> is above optimal. Stop pump if running. Allow soil to drain naturally.`;
+  } else {
+    irrConf = '✅ Moisture optimal';
+    irrText = `Soil moisture <strong>${moist.toFixed(1)}%</strong> is in ideal range for <strong>${activeCrop}</strong> (${crop.min}–${crop.max}%). 
+      ${pump ? '💧 Pump running — will auto-stop at ' + crop.max + '%.' : 'No irrigation needed right now.'}`;
+  }
+  setText('irr-conf', irrConf);
+  var irrEl = document.getElementById('irr-text'); if(irrEl) irrEl.innerHTML = irrText;
+
+  // Update pump buttons
+  var startBtn = document.getElementById('pump-start-btn');
+  var stopBtn  = document.getElementById('pump-stop-btn');
+  if(startBtn) { startBtn.style.display = pump ? 'none' : 'inline-flex'; }
+  if(stopBtn)  { stopBtn.style.display  = pump ? 'inline-flex' : 'none'; stopBtn.textContent = '⏹ Stop Pump A'; }
+
+  // ── 2. Crop Health Summary ─────────────────────
+  setText('health-score-meta', 'Score ' + health + '/100');
+
+  // NPK values from sensor data
+  var npkN = d.nitrogen   || '--';
+  var npkP = d.phosphorus || '--';
+  var npkK = d.potassium  || '--';
+  var pHv  = d.soilPH ? d.soilPH.toFixed(1) + ' ✓' : '--';
+
+  var npkNel = document.getElementById('npk-n'); if(npkNel) {
+    npkNel.textContent = npkN;
+    npkNel.style.color = npkN==='Low'?'#d97706':npkN==='High'?'#dc2626':'#15803d';
+    npkNel.closest('div[style]').style.background = npkN==='Low'?'#fef3c7':'#f0fdf4';
+  }
+  var npkPel = document.getElementById('npk-p'); if(npkPel) npkPel.textContent = npkP;
+  var npkKel = document.getElementById('npk-k'); if(npkKel) {
+    npkKel.textContent = npkK;
+    npkKel.style.color = npkK==='Low'?'#d97706':'#15803d';
+    npkKel.closest('div[style]').style.background = npkK==='Low'?'#fef3c7':'#f0fdf4';
+  }
+  var pHel = document.getElementById('npk-ph'); if(pHel) {
+    pHel.textContent = pHv;
+    pHel.style.color = d.soilPH && d.soilPH>=5.5 && d.soilPH<=7.5 ? '#15803d' : '#d97706';
+  }
+
+  // ── 3. Temperature alert in insights ──────────────
+  if(temp > crop.maxTemp) {
+    var pestEl = document.querySelector('#insights-pest-text');
+    if(!pestEl) return;
+    pestEl.innerHTML = `🌡️ Temperature <strong>${temp.toFixed(1)}°C</strong> exceeds safe limit for <strong>${activeCrop}</strong> (max ${crop.maxTemp}°C). 
+      Risk of heat stress. Increase irrigation frequency and avoid spray applications.`;
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// 📈 MARKET PRICES from Backend
+// ═══════════════════════════════════════════════════
+async function fetchMarketPrices() {
+  try {
+    const res  = await fetch(API_BASE + '/market/?sort=-modalPrice');
+    const json = await res.json();
+    if(!json.success) return;
+    var container = document.getElementById('market-rows'); if(!container) return;
+    container.innerHTML = json.prices.slice(0,4).map(p => {
+      var d = Math.floor(Math.random()*160)-40;
+      return `<div class="mrow"><div><div class="mr-crop">${p.crop}</div><div class="mr-loc">${p.mandi} Mandi</div></div><div style="text-align:right"><div class="mr-price">₹${p.modalPrice.toLocaleString('en-IN')}/q</div><div class="mr-delta ${d>=0?'d-up':'d-dn'}">${d>=0?'↑ +':'↓ '}${Math.abs(d)}</div></div></div>`;
+    }).join('');
+  } catch(err) {}
+}
+
+// ═══════════════════════════════════════════════════
+// 🔄 AUTO MODE — ESP32 ko auto irrigation pe daalo
+// ═══════════════════════════════════════════════════
+async function setAutoMode(zone, btnId, statusId, toggleId) {
+  var btn = document.getElementById(btnId);
+  var s   = document.getElementById(statusId);
+  var t   = document.getElementById(toggleId);
+  if(!btn) return;
+
+  // Loading state
+  btn.textContent = '...';
+  btn.disabled = true;
+  btn.style.opacity = '0.6';
+
+  try {
+    const res = await fetch(API_BASE+'/sensor/pump/'+DEVICE_ID, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ zone: zone, action: 'auto', source: 'manual' })
+    });
+    const json = await res.json();
+    if(json.success) {
+      // Update UI
+      if(s) { s.textContent = 'Auto'; s.className = 'tstatus ts-on'; }
+      if(t) { t.classList.remove('off'); t.classList.add('on'); }
+      btn.textContent = '✅ Auto';
+      btn.style.background = '#dcfce7';
+      btn.style.borderColor = '#16a34a';
+      apiToast(zone + ' → AUTO mode ON ✓ (ESP32 moisture se khud control karega)', 'ok');
+      // 3 sec baad reset
+      setTimeout(()=>{ btn.textContent='⚡ Auto'; btn.style.background='#f0fdf4'; btn.style.borderColor='#22c55e'; }, 3000);
+    } else throw new Error(json.message);
+  } catch(err) {
+    btn.textContent = '⚡ Auto';
+    apiToast('Auto mode failed — backend connected?', 'err');
+  } finally {
+    btn.disabled = false;
+    btn.style.opacity = '1';
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// 💧 PUMP CONTROL — Website toggle → Backend → ESP32
+// ═══════════════════════════════════════════════════
+async function tog(toggleId, statusId, zone) {
+  var t=document.getElementById(toggleId), s=document.getElementById(statusId);
+  if(!t||!s) return;
+  var isOn = t.classList.contains('on');
+  var newAction = isOn ? 'off' : 'on';
+
+  // Optimistic UI
+  t.classList.replace(isOn?'on':'off', isOn?'off':'on');
+  s.textContent = isOn ? 'Off' : 'Running';
+  s.className = 'tstatus ' + (isOn?'ts-off':'ts-on');
+  t.dataset.manualOverride = '1';
+  t.disabled = true; t.style.opacity = '0.6';
+
+  try {
+    const res = await fetch(API_BASE+'/sensor/pump/'+DEVICE_ID, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ zone: zone || 'Zone-1', action: newAction, source:'manual' })
+    });
+    const json = await res.json();
+    if(json.success) {
+      apiToast((zone||'Pump') + ' → ' + newAction.toUpperCase() + ' ✓', 'ok');
+    } else throw new Error(json.message);
+  } catch(err) {
+    // Revert on error
+    t.classList.replace(isOn?'off':'on', isOn?'on':'off');
+    s.textContent = isOn?'Running':'Off'; s.className = 'tstatus '+(isOn?'ts-on':'ts-off');
+    delete t.dataset.manualOverride;
+    apiToast('Pump command failed — backend connected?', 'err');
+  } finally {
+    t.disabled=false; t.style.opacity='1';
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// 📊 SPARKLINES — from sensor history
+// ═══════════════════════════════════════════════════
+async function fetchHistory() {
+  try {
+    const res  = await fetch(API_BASE+'/sensor/history/'+DEVICE_ID+'?days=7');
+    const json = await res.json();
+    if(!json.success || !json.history.length) throw new Error('no data');
+    var h = json.history;
+    mkSpark('sp1', h.map(d=>d.avgMoisture||0), '#f59e0b');
+    mkSpark('sp2', h.map(d=>calcHealth({soilMoisture:d.avgMoisture,soilPH:6.8,temperature:d.avgTemp,humidity:65,alertLevel:'ok'})), '#22c55e');
+    mkSpark('sp3', h.map(d=>d.avgTemp||0), '#8b5cf6');
+    mkSpark('sp4', h.map(d=>d.count*15), '#3b82f6');
+  } catch {
+    mkSpark('sp1',[55,48,60,42,50,38,42],'#f59e0b');
+    mkSpark('sp2',[70,72,74,76,75,77,78],'#22c55e');
+    mkSpark('sp3',[30,31,33,34,32,33,34],'#8b5cf6');
+    mkSpark('sp4',[1500,1400,1350,1280,1300,1240,1240],'#3b82f6');
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// 🚀 INIT
+// ═══════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', function() {
+  // Re-bind toggles (remove old inline onclick)
+  var zones = [['t1','s1','Zone-1'],['t2','s2','Zone-2'],['t3','s3','Zone-3']];
+  zones.forEach(([tid,sid,zone]) => {
+    var el = document.getElementById(tid);
+    if(el) { el.removeAttribute('onclick'); el.addEventListener('click', ()=>tog(tid,sid,zone)); }
+  });
+
+  // Initial load
+  fetchWeather();
+  fetchSensorData();
+  fetchHistory();
+  fetchMarketPrices();
+
+  // Auto-refresh intervals
+  setInterval(fetchSensorData,   SENSOR_POLL);
+  setInterval(fetchMarketPrices, MARKET_POLL);
+  setInterval(fetchWeather,      WEATHER_POLL);
+});
+</script>
+<script src="anim.js"></script>
+</body>
+</html>

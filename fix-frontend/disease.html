@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Disease Detection — AgroGuardian AI</title>
+<link rel="stylesheet" href="style.css">
+<style>
+body{padding-top:64px;background:#f8faf6}
+.content{max-width:1200px;margin:0 auto;padding:36px 5%}
+.page-grid{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start}
+
+/* UPLOAD */
+.upload-box{background:#fff;border:2px dashed #86efac;border-radius:20px;padding:40px;text-align:center;cursor:pointer;transition:all 0.2s;position:relative;overflow:hidden}
+.upload-box:hover,.upload-box.drag{border-color:#22c55e;background:#f0fdf4;transform:scale(1.01)}
+.upload-icon{font-size:52px;margin-bottom:14px;display:block}
+.upload-title{font-size:18px;font-weight:700;color:#0f172a;margin-bottom:8px}
+.upload-sub{font-size:14px;color:#475569;margin-bottom:24px}
+.upload-formats{font-size:11px;color:#94a3b8;margin-top:14px}
+#file-input{display:none}
+
+/* PREVIEW */
+.preview-box{background:#fff;border:1px solid #e2e8f0;border-radius:20px;overflow:hidden;display:none}
+.preview-img{width:100%;height:260px;object-fit:cover;display:block}
+.preview-footer{padding:14px 18px;display:flex;align-items:center;justify-content:space-between}
+.preview-name{font-size:13px;font-weight:600;color:#0f172a}
+.preview-size{font-size:11px;color:#94a3b8}
+.preview-change{font-size:12px;color:#16a34a;cursor:pointer;font-weight:600}
+
+/* ANALYZING */
+.analyzing{background:#fff;border:1px solid #e2e8f0;border-radius:20px;padding:48px;text-align:center;display:none}
+.spinner{width:52px;height:52px;border:3px solid #dcfce7;border-top-color:#22c55e;border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 18px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.analyzing-text{font-size:16px;font-weight:700;color:#0f172a;margin-bottom:6px}
+.analyzing-sub{font-size:13px;color:#64748b}
+.progress-bar{width:100%;height:5px;background:#dcfce7;border-radius:3px;overflow:hidden;margin-top:20px}
+.progress-fill{height:100%;background:linear-gradient(90deg,#22c55e,#4ade80);border-radius:3px;width:0;transition:width 0.3s ease}
+.analyzing-step{font-size:12px;color:#4ade80;margin-top:10px;font-weight:600}
+
+/* RESULT */
+.result-box{background:#fff;border:1px solid #e2e8f0;border-radius:20px;padding:24px;display:none}
+.result-header{display:flex;align-items:center;gap:14px;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid #f1f5f9}
+.result-icon{width:54px;height:54px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0}
+.result-disease{font-size:18px;font-weight:800;color:#0f172a}
+.result-confidence{font-size:13px;font-weight:600;margin-top:3px}
+.conf-high{color:#16a34a}.conf-med{color:#d97706}
+.result-section{margin-bottom:18px}
+.rs-title{font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px}
+.rs-content{font-size:14px;color:#475569;line-height:1.7}
+.treatment-item{display:flex;align-items:flex-start;gap:10px;padding:10px 14px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;margin-bottom:8px}
+.ti-num{width:22px;height:22px;border-radius:50%;background:#16a34a;color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.ti-text{font-size:13px;color:#166534;line-height:1.5}
+.severity-bar{height:10px;background:#f1f5f9;border-radius:5px;overflow:hidden;margin-top:8px}
+.sev-fill{height:100%;border-radius:5px;transition:width 0.5s ease}
+.sev-low{background:linear-gradient(90deg,#22c55e,#4ade80)}
+.sev-med{background:linear-gradient(90deg,#f59e0b,#fbbf24)}
+.sev-high{background:linear-gradient(90deg,#ef4444,#f87171)}
+
+/* CROP FILTER TABS */
+.crop-filter{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap}
+.cf-btn{padding:6px 14px;border-radius:20px;border:1.5px solid #e2e8f0;background:#fff;font-size:12px;font-weight:600;color:#64748b;cursor:pointer;transition:all 0.15s;font-family:'Outfit',sans-serif}
+.cf-btn:hover{border-color:#86efac;color:#15803d}
+.cf-btn.active{background:#16a34a;color:#fff;border-color:#16a34a}
+
+/* DISEASE CARDS */
+.disease-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.disease-card{border:1px solid #e2e8f0;border-radius:14px;padding:14px;cursor:pointer;transition:all 0.2s;background:#fff}
+.disease-card:hover{border-color:#86efac;background:#f0fdf4;transform:translateY(-2px)}
+.dc-icon{font-size:24px;margin-bottom:8px}
+.dc-name{font-size:13px;font-weight:700;color:#0f172a}
+.dc-crops{font-size:11px;color:#64748b;margin-top:3px}
+.dc-severity{display:inline-flex;align-items:center;gap:4px;margin-top:6px;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700}
+.ds-high{background:#fef2f2;color:#991b1b}
+.ds-med{background:#fef3c7;color:#92400e}
+.ds-low{background:#f0fdf4;color:#166534}
+
+/* HISTORY */
+.history-card{background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:18px}
+.hc-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #f8fafc}
+.hc-row:last-child{border:none}
+.hc-thumb{width:44px;height:44px;border-radius:12px;background:#f0fdf4;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;border:1px solid #dcfce7}
+.hc-disease{font-size:13px;font-weight:600;color:#0f172a}
+.hc-date{font-size:11px;color:#94a3b8;margin-top:2px}
+.hc-badge{margin-left:auto;font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;white-space:nowrap}
+.badge-green{background:#f0fdf4;color:#166534;border:1px solid #bbf7d0}
+.badge-amber{background:#fef3c7;color:#92400e;border:1px solid #fde68a}
+.badge-red{background:#fef2f2;color:#991b1b;border:1px solid #fecaca}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 2C7 2 4 5.5 4 9.5c0 3 1.5 5.5 3.8 6.8L10 18l2.2-1.7C14.5 15 16 12.5 16 9.5 16 5.5 13 2 10 2z" fill="rgba(255,255,255,0.95)"/><path d="M10 7v5M8 9l2-2 2 2" stroke="rgba(21,128,61,0.9)" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+      <div class="nav-logo-text">Agro<span>Guardian</span> AI</div>
+    </a>
+    <div class="nav-links">
+      <a href="index.html">Home</a><a href="dashboard.html">Dashboard</a>
+      <a href="disease.html" class="active">Disease AI</a>
+      <a href="market.html">Market</a><a href="schemes.html">Schemes</a><a href="about.html">About</a>
+    </div>
+    <a href="dashboard.html" class="btn btn-green" style="font-size:13px;padding:8px 18px;">Open Dashboard →</a>
+  </div>
+</nav>
+
+<div class="page-hero">
+  <div class="page-hero-inner">
+    <div class="section-tag" style="background:rgba(74,222,128,0.15);border-color:rgba(74,222,128,0.3);color:#86efac;margin-bottom:14px">AI-Powered · 98% Accuracy · 38 Diseases</div>
+    <h1>🔬 Crop Disease Detection</h1>
+    <p>Upload a photo of your crop leaf. Our CNN model detects diseases, pests, and deficiencies instantly — and gives the exact treatment plan.</p>
+  </div>
+</div>
+
+<div class="content">
+  <div class="page-grid">
+    <!-- LEFT: UPLOAD + RESULT -->
+    <div>
+      <!-- STATS ROW -->
+      <div class="grid-3 mb-16" style="gap:10px;margin-bottom:20px">
+        <div class="stat-card"><div class="stat-num" style="font-size:22px;color:#16a34a">98%</div><div class="stat-label">Accuracy</div></div>
+        <div class="stat-card"><div class="stat-num" style="font-size:22px;color:#3b82f6">38</div><div class="stat-label">Diseases</div></div>
+        <div class="stat-card"><div class="stat-num" style="font-size:22px;color:#f59e0b">&lt;3s</div><div class="stat-label">Detection</div></div>
+      </div>
+
+      <!-- UPLOAD -->
+      <div class="upload-box" id="upload-box" onclick="document.getElementById('file-input').click()" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="handleDrop(event)">
+        <span class="upload-icon">🌿</span>
+        <div class="upload-title">Upload Crop Leaf Photo</div>
+        <div class="upload-sub">Drag & drop or click to select an image. Our AI will detect any disease in under 3 seconds.</div>
+        <button class="btn btn-green" onclick="event.stopPropagation();document.getElementById('file-input').click()" style="margin:0 auto">Choose Photo</button>
+        <div class="upload-formats">Supports JPG, PNG, WEBP · Max 10MB · Works on any crop</div>
+      </div>
+      <input type="file" id="file-input" accept="image/*" onchange="handleFile(event)">
+
+      <!-- PREVIEW -->
+      <div class="preview-box" id="preview-box">
+        <img id="preview-img" class="preview-img" src="" alt="Preview">
+        <div class="preview-footer">
+          <div><div class="preview-name" id="preview-name">leaf-photo.jpg</div><div class="preview-size" id="preview-size">2.4 MB</div></div>
+          <span class="preview-change" onclick="resetUpload()">Change photo ✕</span>
+        </div>
+        <div style="padding:0 18px 18px">
+          <button class="btn btn-green full-width" onclick="startAnalysis()" style="justify-content:center;font-size:14px;width:100%">🔬 Analyze with AI →</button>
+        </div>
+      </div>
+
+      <!-- ANALYZING -->
+      <div class="analyzing" id="analyzing">
+        <div class="spinner"></div>
+        <div class="analyzing-text">AI is analyzing your crop...</div>
+        <div class="analyzing-sub">Running CNN disease detection model</div>
+        <div class="progress-bar"><div class="progress-fill" id="prog-fill"></div></div>
+        <div class="analyzing-step" id="analyzing-step">Preprocessing image...</div>
+      </div>
+
+      <!-- RESULT -->
+      <div class="result-box" id="result-box">
+        <div class="result-header">
+          <div class="result-icon" id="res-icon" style="background:#fef2f2">🍂</div>
+          <div style="flex:1">
+            <div class="result-disease" id="res-disease">Leaf Blight Disease</div>
+            <div class="result-confidence conf-high" id="res-conf">94% Confidence</div>
+          </div>
+          <span class="badge badge-amber" id="res-sev">Moderate</span>
+        </div>
+        <div class="result-section">
+          <div class="rs-title">What is this?</div>
+          <div class="rs-content" id="res-desc">Loading...</div>
+        </div>
+        <div class="result-section">
+          <div class="rs-title">Severity Level</div>
+          <div class="severity-bar"><div class="sev-fill sev-med" id="res-sev-bar" style="width:60%"></div></div>
+          <div style="display:flex;justify-content:space-between;margin-top:5px;font-size:10px;color:#94a3b8"><span>Low</span><span>Moderate</span><span>High</span></div>
+        </div>
+        <div class="result-section">
+          <div class="rs-title">Recommended Treatment</div>
+          <div id="res-treatment"></div>
+        </div>
+        <button class="btn btn-green" onclick="resetUpload()" style="width:100%;justify-content:center;font-size:14px">🔄 Scan Another Crop</button>
+      </div>
+    </div>
+
+    <!-- RIGHT -->
+    <div>
+      <!-- CROP FILTER -->
+      <div style="background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:18px;margin-bottom:16px">
+        <div style="font-size:14px;font-weight:700;color:#0f172a;margin-bottom:4px">Common Diseases — Rajasthan</div>
+        <div style="font-size:12px;color:#94a3b8;margin-bottom:14px">Filter by crop type</div>
+        <div class="crop-filter">
+          <button class="cf-btn active" onclick="filterDiseases(this,'all')">All Crops</button>
+          <button class="cf-btn" onclick="filterDiseases(this,'cereal')">Cereals</button>
+          <button class="cf-btn" onclick="filterDiseases(this,'veg')">Vegetables</button>
+          <button class="cf-btn" onclick="filterDiseases(this,'pulse')">Pulses</button>
+          <button class="cf-btn" onclick="filterDiseases(this,'oilseed')">Oilseeds</button>
+        </div>
+        <div class="disease-grid" id="diseaseGrid">
+          <div class="disease-card hover-lift" data-dcat="cereal"><div class="dc-icon">🟤</div><div class="dc-name">Wheat Rust</div><div class="dc-crops">Wheat · Barley</div><span class="dc-severity ds-high">● High Risk</span></div>
+          <div class="disease-card hover-lift" data-dcat="cereal"><div class="dc-icon">🔴</div><div class="dc-name">Leaf Blight</div><div class="dc-crops">Maize · Sorghum</div><span class="dc-severity ds-med">● Moderate</span></div>
+          <div class="disease-card hover-lift" data-dcat="pulse"><div class="dc-icon">🟡</div><div class="dc-name">Yellow Mosaic</div><div class="dc-crops">Soybean · Mung</div><span class="dc-severity ds-high">● High Risk</span></div>
+          <div class="disease-card hover-lift" data-dcat="veg"><div class="dc-icon">🟫</div><div class="dc-name">Early Blight</div><div class="dc-crops">Tomato · Potato</div><span class="dc-severity ds-med">● Moderate</span></div>
+          <div class="disease-card hover-lift" data-dcat="veg"><div class="dc-icon">🟣</div><div class="dc-name">Purple Blotch</div><div class="dc-crops">Onion · Garlic</div><span class="dc-severity ds-med">● Moderate</span></div>
+          <div class="disease-card hover-lift" data-dcat="oilseed"><div class="dc-icon">⚫</div><div class="dc-name">Alternaria Blight</div><div class="dc-crops">Mustard · Rapeseed</div><span class="dc-severity ds-high">● High Risk</span></div>
+          <div class="disease-card hover-lift" data-dcat="cereal"><div class="dc-icon">🟢</div><div class="dc-name">Smut Disease</div><div class="dc-crops">Wheat · Maize</div><span class="dc-severity ds-low">● Low Risk</span></div>
+          <div class="disease-card hover-lift" data-dcat="pulse"><div class="dc-icon">🟠</div><div class="dc-name">Root Rot</div><div class="dc-crops">Chana · Moong</div><span class="dc-severity ds-med">● Moderate</span></div>
+        </div>
+      </div>
+
+      <!-- SCAN HISTORY -->
+      <div class="history-card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+          <span style="font-size:14px;font-weight:700;color:#0f172a">📋 Recent Scans</span>
+          <span style="font-size:12px;color:#16a34a;cursor:pointer">View all →</span>
+        </div>
+        <div class="hc-row"><div class="hc-thumb">🌾</div><div><div class="hc-disease">Wheat Rust</div><div class="hc-date">Today, 8:00 AM · Field A</div></div><span class="hc-badge badge-green">Treated</span></div>
+        <div class="hc-row"><div class="hc-thumb">🌽</div><div><div class="hc-disease">Maize Leaf Blight</div><div class="hc-date">Yesterday · Field B</div></div><span class="hc-badge badge-amber">Monitoring</span></div>
+        <div class="hc-row"><div class="hc-thumb">🍅</div><div><div class="hc-disease">Tomato Early Blight</div><div class="hc-date">2 days ago · Field C</div></div><span class="hc-badge badge-red">⚠ Active</span></div>
+        <div class="hc-row"><div class="hc-thumb">🧅</div><div><div class="hc-disease">Onion Purple Blotch</div><div class="hc-date">3 days ago · Field A</div></div><span class="hc-badge badge-green">Treated</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-bottom" style="border-top:none;padding-top:0">
+      <div class="footer-copy">© 2026 AgroGuardian AI · Alpha Coders — GEC Ajmer</div>
+      <div class="footer-team">Built with ❤️ for Indian Farmers 🌱</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ── DISEASE DATA ──
+const diseases=[
+  {name:"Leaf Blight Disease",conf:"94%",icon:"🍂",bg:"#fef2f2",sev:"Moderate",sevW:"60%",sevClass:"sev-med",sevBadge:"badge-amber",
+   desc:"Leaf Blight is a fungal disease caused by <em>Helminthosporium oryzae</em>. Brown oval spots appear on leaves, reducing photosynthesis. Spreads quickly in humid conditions.",
+   pesticide:"Mancozeb 75% WP", dosage:"2g/L water as foliar spray",
+   treatments:["Apply Mancozeb 75% WP @ 2g/L water as foliar spray","Remove and destroy infected leaves immediately","Avoid overhead irrigation; water at base of plant","Repeat spray after 10 days if needed"]},
+  {name:"Wheat Rust (Yellow Rust)",conf:"97%",icon:"🟡",bg:"#fef3c7",sev:"High Severity",sevW:"85%",sevClass:"sev-high",sevBadge:"badge-red",
+   desc:"Yellow rust is caused by <em>Puccinia striiformis</em>. Yellow-orange pustules appear in stripes along leaves. Highly contagious — spreads rapidly in cool humid weather.",
+   pesticide:"Propiconazole 25% EC", dosage:"0.1% spray", 
+   treatments:["Apply Propiconazole 25% EC @ 0.1% spray immediately","Remove infected plants from field edges first","Monitor daily — repeat spray after 10 days","Maintain field hygiene; avoid waterlogging"]},
+  {name:"No Disease Detected ✓",conf:"99%",icon:"✅",bg:"#f0fdf4",sev:"Healthy",sevW:"5%",sevClass:"sev-low",sevBadge:"badge-green",
+   desc:"Your crop looks perfectly healthy! No signs of disease, pest infection, or nutrient deficiency detected. Continue your current maintenance routine.",
+   treatments:["Continue regular watering schedule as planned","Apply balanced NPK fertilizer as per soil test results","Monitor weekly for early signs of stress","Maintain proper row spacing for air circulation"]},
+  {name:"Tomato Early Blight",conf:"92%",icon:"🍅",bg:"#fef2f2",sev:"Moderate",sevW:"55%",sevClass:"sev-med",sevBadge:"badge-amber",
+   desc:"Early Blight caused by <em>Alternaria solani</em>. Dark brown concentric ring spots appear on lower leaves first, then spread upward. Common in warm, wet weather.",
+   pesticide:"Chlorothalonil 75% WP", dosage:"2.5g/L water",
+   treatments:["Apply Chlorothalonil 75% WP @ 2.5g/L water","Remove and bury infected leaves — do not compost","Avoid wetting foliage during irrigation","Apply mulch around plants to reduce soil splash"]},
+];
+
+function normalizeText(text){
+  return (text || '').toString().toLowerCase().replace(/[^a-z0-9\s]/g,'').trim();
+}
+
+function findDiseaseProfile(diseaseName){
+  const key = normalizeText(diseaseName);
+  return diseases.find(d => normalizeText(d.name).includes(key) || key.includes(normalizeText(d.name))) || null;
+}
+
+function parseDosage(dosage){
+  if (!dosage) return null;
+  const clean = dosage.toString().toLowerCase();
+
+  let m = clean.match(/([\d.]+)\s*g\s*\/\s*l/);
+  if (m) return {raw: dosage, type:'g/L', value: parseFloat(m[1]), per100:(parseFloat(m[1])*100).toFixed(1)+' g/100L', per600:(parseFloat(m[1])*600).toFixed(1)+' g/600L'};
+
+  m = clean.match(/([\d.]+)\s*ml\s*\/\s*l/);
+  if (m) return {raw: dosage, type:'ml/L', value: parseFloat(m[1]), per100:(parseFloat(m[1])*100).toFixed(1)+' ml/100L', per600:(parseFloat(m[1])*600).toFixed(1)+' ml/600L'};
+
+  m = clean.match(/([\d.]+)\s*%/);
+  if (m) {
+    const pct = parseFloat(m[1]);
+    return {raw: dosage, type:'%', value:pct, per100: (pct * 1).toFixed(2)+'% (~'+(pct*1).toFixed(2)+' g/100L)', per600:(pct*6).toFixed(2)+'% (~'+(pct*6).toFixed(2)+' g/600L)'};
+  }
+
+  return null;
+}
+
+function formatDosageCard(pesticide, dosage, recommendation){
+  const parsed = parseDosage(dosage);
+  let table = '';
+  if (parsed){
+    table = `<div style="margin-top:6px;font-size:12px;color:#334155">→ ${parsed.per100}, ${parsed.per600}</div>`;
+  }
+  return `<div style="margin-top:10px;padding:10px 14px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;font-size:12px;color:#1e40af">
+    <strong>💊 Pesticide:</strong> ${pesticide} &nbsp;|&nbsp; <strong>Dosage:</strong> ${dosage}
+    ${recommendation ? `<div style="margin-top:4px;color:#0f766e;font-weight:600">✔ Recommended: ${recommendation}</div>` : ''}
+    ${table}
+  </div>`;
+}
+
+function improvePesticideDosage(r){
+  if (!r || !r.disease) return '';
+  const dname = r.disease.toString().toLowerCase();
+  if (dname.includes('no disease') || dname.includes('healthy')) return '';
+
+  const profile = findDiseaseProfile(r.disease);
+  if (!profile) return '';
+
+  const pesticide = r.pesticide || profile.pesticide || 'Unknown';
+  const dosage   = r.dosage   || profile.dosage   || 'Follow label';
+
+  const rec = profile.pesticide && profile.dosage && (pesticide !== profile.pesticide || dosage !== profile.dosage)
+    ? `${profile.pesticide} @ ${profile.dosage}`
+    : '';
+
+  return formatDosageCard(pesticide, dosage, rec);
+}
+
+// ── DISEASE FILTER ──
+function filterDiseases(btn, cat){
+  document.querySelectorAll('.cf-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.disease-card').forEach(card=>{
+    if(cat==='all'||card.dataset.dcat===cat){card.style.display='';}
+    else{card.style.display='none';}
+  });
+}
+
+// ── BACKEND CONFIG ──
+const BACKEND_IP = '10.109.254.121';
+const API_BASE   = `http://${BACKEND_IP}:5000/api`;
+
+// ── UPLOAD / ANALYSIS ──
+function handleFile(e){const f=e.target.files[0];if(f)showPreview(f);}
+function handleDrop(e){e.preventDefault();document.getElementById('upload-box').classList.remove('drag');const f=e.dataTransfer.files[0];if(f&&f.type.startsWith('image/'))showPreview(f);}
+
+function showPreview(f){
+  const r=new FileReader();
+  r.onload=ev=>{
+    document.getElementById('upload-box').style.display='none';
+    document.getElementById('preview-box').style.display='block';
+    document.getElementById('preview-img').src=ev.target.result;
+    document.getElementById('preview-name').textContent=f.name;
+    document.getElementById('preview-size').textContent=(f.size/1024/1024).toFixed(1)+' MB';
+  };
+  r.readAsDataURL(f);
+}
+
+function resetUpload(){
+  ['upload-box','preview-box','analyzing','result-box'].forEach(id=>{
+    const el=document.getElementById(id);
+    el.style.display=id==='upload-box'?'block':'none';
+  });
+  document.getElementById('file-input').value='';
+  document.getElementById('prog-fill').style.width='0';
+}
+
+const steps=['Uploading image...','Preprocessing image...','Running CNN model...','Detecting disease patterns...','Generating treatment plan...'];
+
+async function startAnalysis(){
+  const fileInput = document.getElementById('file-input');
+  const file = fileInput.files[0];
+  if(!file){ alert('Pehle photo select karo!'); return; }
+
+  // Show analyzing UI
+  document.getElementById('preview-box').style.display='none';
+  document.getElementById('analyzing').style.display='block';
+
+  // Animate progress bar
+  let p=0, stepIdx=0;
+  const iv=setInterval(()=>{
+    p+=Math.random()*12; if(p>90)p=90;
+    document.getElementById('prog-fill').style.width=p+'%';
+    const s=Math.floor(p/20);
+    if(s!==stepIdx&&s<steps.length){stepIdx=s;document.getElementById('analyzing-step').textContent=steps[stepIdx];}
+  },200);
+
+  try {
+    // ── REAL API CALL ──
+    const formData = new FormData();
+    formData.append('image', file);
+    const cropType = document.getElementById('crop-type-select')?.value || 'Unknown';
+    formData.append('cropType', cropType);
+
+    const res  = await fetch(API_BASE + '/disease/analyze', { method: 'POST', body: formData });
+    const json = await res.json();
+
+    clearInterval(iv);
+    document.getElementById('prog-fill').style.width='100%';
+    document.getElementById('analyzing-step').textContent='Analysis complete!';
+
+    setTimeout(()=>{
+      document.getElementById('analyzing').style.display='none';
+
+      if(!json.success) throw new Error(json.message || 'Analysis failed');
+
+      const r = json.result;
+      const detected = r.detected;
+
+      // Severity → badge + bar class mapping
+      const sevMap = {
+        'none':     { badge:'badge-green', barClass:'sev-low',  barW:'5%',  label:'Healthy' },
+        'mild':     { badge:'badge-green', barClass:'sev-low',  barW:'30%', label:'Mild' },
+        'moderate': { badge:'badge-amber', barClass:'sev-med',  barW:'60%', label:'Moderate' },
+        'severe':   { badge:'badge-red',   barClass:'sev-high', barW:'90%', label:'Severe' },
+      };
+      const sev = sevMap[r.severity] || sevMap['moderate'];
+
+      document.getElementById('res-icon').textContent  = detected ? '🍂' : '✅';
+      document.getElementById('res-icon').style.background = detected ? '#fef2f2' : '#f0fdf4';
+      document.getElementById('res-disease').textContent   = detected ? r.disease : 'No Disease Detected ✓';
+      document.getElementById('res-conf').textContent      = r.confidence + '% Confidence';
+      document.getElementById('res-sev').textContent       = sev.label;
+      document.getElementById('res-sev').className         = 'badge ' + sev.badge;
+      document.getElementById('res-sev-bar').style.width   = sev.barW;
+      document.getElementById('res-sev-bar').className     = 'sev-fill ' + sev.barClass;
+
+      // Description
+      const desc = detected
+        ? `<strong>${r.disease}</strong> detected in your crop. Severity: <em>${r.severity}</em>. Crop type: ${r.cropType || 'Unknown'}. Take action immediately as per the treatment plan below.`
+        : 'Your crop looks healthy! No signs of disease, pest infection, or nutrient deficiency detected.';
+      document.getElementById('res-desc').innerHTML = desc;
+
+      // Treatment plan
+      const tr = document.getElementById('res-treatment');
+      tr.innerHTML = '';
+      if(r.treatment){
+        r.treatment.split('.').filter(t=>t.trim()).forEach((t,i)=>{
+          tr.innerHTML += `<div class="treatment-item"><div class="ti-num">${i+1}</div><div class="ti-text">${t.trim()}.</div></div>`;
+        });
+      }
+      const dosageCard = improvePesticideDosage(r);
+      if (dosageCard){
+        tr.innerHTML += dosageCard;
+      }
+
+      document.getElementById('result-box').style.display='block';
+
+    }, 400);
+
+  } catch(err) {
+    clearInterval(iv);
+    document.getElementById('analyzing').style.display='none';
+    document.getElementById('preview-box').style.display='block';
+    document.getElementById('prog-fill').style.width='0';
+    console.error('Disease API error:', err);
+    alert('❌ Analysis failed: ' + err.message + '\n\nCheck karo ki backend chal raha hai: ' + API_BASE);
+  }
+}
+</script>
+<script src="anim.js"></script>
+</body>
+</html>
