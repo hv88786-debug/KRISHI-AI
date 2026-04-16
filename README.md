@@ -104,7 +104,7 @@ KRISHI-AI/
 | **Harish Kumar** | Team Lead, Backend & IoT |
 | **Lucky Gupta** | Frontend Development |
 | **Jiya Sapnani** | UI/UX & Research |
-| **Meenakshi  Gupta** | Data & Presentation |
+| **Meenakshi** | Data & Presentation |
 
 > 🏆 Built for **PUNE AGRI HACKTHON** | Government Engineering College, Ajmer
 
